@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+    <title>UltASeqAn Result Visualization</title>
+    <link rel="stylesheet" type="text/css" href="lib/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/jqwidgets/styles/jqx.base.css" />
+    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/custom_new.css">
+    
+    <script type="text/javascript" src="lib/js/d3.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="lib/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="lib/js/math.min.js"></script>
+    <script type="text/javascript" src="lib/jqwidgets/jqx-all.js"></script>
+</head>
+
+
+<body style="width: 100%; height: 100%;">
+	
+<div id="tooltip1" class="hidden"><p><span id="value"></div>
+
+<div id="container-id-1" style="width: 100%; height: 100%; clear: both;">
+	<div id="dashboard" class="sidebar_wrapper" style="float: left; width: 300px; height: 1000px; overflow: hidden; display: block; border-right: 1px solid grey;">
+		<div class="title_section">
+			<img class="title_image" src="logo.jpg" alt="" style="width: 290px; margin-left: 2px; margin-top: 5px;">
+		</div>
+		
+		<div class="reorder_section" style="margin: 1px; margin-top: 10px; padding:2px; font-size: 11px; border: 0.5px solid grey;">
+			<div id='jqxWidget'><label>Select the Genomes for visualization: </label><div id="listbox"></div></div>
+			
+			<div class="opacity_slider_container" style="margin-top: 5px;">
+				<div ><label for="cutoffAmount">Max distance &lt;= </label><input type="text" value="1" id="cutoffAmount" readonly style="border:0; font-weight:bold; width: 50px;"></div>
+				<div id="cutoffSlider" style="width: 290px;"></div>
+			</div>
+			<div class="btn-group gene_search_button" data-toggle="buttons" style="margin-top: 10px;">
+				<div><button id="okBtn" class="sidebar_text btn btn-primary submit_gene_button" type="button" disabled="true" onclick="updateData()" style="float: left; padding-top: 6px; padding-bottom: 6px;">OK</button></div>
+			</div>
+		</div>
+	</div>
+	<div id="vizcontainer" style="float: left; height: 1000px; ">
+		<svg id="heatCanvas"></svg> 
+	</div>
+
+</div>
+
+
+<footer id="footer_div" class="footer navbar-fixed-bottom">
+    <div class="row"><div class="col-xs-12 footer_section"><p class="text-muted">Copyright (C) 2016 Yang Lu &lt;<a href="mailto:ylu465@usc.edu">ylu465@usc.edu</a>&gt; @ Computational and Molecular Biology, Department of Biological Science, University of Southern California, LA, CA 90089, USA </p></div></div>
+</footer>
+
+<script type="text/javascript">
+	var margin = {top: 200, right: 10, bottom: 10, left: 200};
+   var colors = ['#91003F','#9B1A53','#A63467','#B14F7C','#BB6990','#C684A4','#D19EB9','#DBB9CD','#E6D3E1','#F1EEF6','#FFFFFF'];
+   
+   var genomeNameIdxMap = new Object();   
+   var cutoff = 1;
+   var checkedGenomeIdxArr = [], checkedGenomeArr = [], edgeData =[];
+var genomeNameArr = ["AB002632","AB008550","AB009866","AB012573","AB012574","AB016282","AB043678","AB043679","AB044554","AB045978","AB063393","AB102868","AB231700","AB243556","AB255436","AB259123","AB259124","AB276040","AB285204","AB334720","AB334721","AB362338","AB366653","AB370205","AB370268","AB374228","AB426868","AB434711","AB451219","AB472900"];
+var genomeMat = [[0,0.435174,0.359534,0.353966,0.353801,0.35354,0.358136,0.366613,0.35664,0.374138,0.461507,0.359158,0.559745,0.361026,0.375623,0.413252,0.430595,0.401475,0.391008,0.375855,0.374249,0.353684,0.447421,0.390413,0.377105,0.333352,0.353627,0.409261,0.437695,0.44834],
+[0.435174,0,0.411781,0.403482,0.403509,0.3756,0.415134,0.420626,0.413166,0.415479,0.413918,0.317255,0.538876,0.419526,0.33408,0.320255,0.309129,0.173601,0.328386,0.459986,0.460756,0.312257,0.236943,0.431279,0.436753,0.311363,0.31223,0.32039,0.253317,0.293326],
+[0.359534,0.411781,0,0.370044,0.369356,0.336568,0.358057,0.373202,0.111896,0.181687,0.451094,0.321336,0.589261,0.0752346,0.351958,0.395296,0.417293,0.370649,0.35414,0.410341,0.411059,0.32866,0.378672,0.201189,0.210534,0.30192,0.328404,0.381596,0.400299,0.399918],
+[0.353966,0.403482,0.370044,0,0.000238538,0.382532,0.286383,0.287157,0.375439,0.382729,0.456033,0.363876,0.582571,0.370486,0.370379,0.382914,0.432172,0.368729,0.394768,0.42201,0.419871,0.360233,0.379987,0.393039,0.389457,0.326299,0.360351,0.380847,0.395653,0.419695],
+[0.353801,0.403509,0.369356,0.000238538,0,0.382123,0.28595,0.286863,0.374788,0.382486,0.456165,0.363651,0.582857,0.369788,0.370273,0.382953,0.432039,0.36859,0.394861,0.421864,0.419725,0.360044,0.379764,0.392382,0.388692,0.326007,0.360162,0.380894,0.395366,0.419972],
+[0.35354,0.3756,0.336568,0.382532,0.382123,0,0.397962,0.415375,0.327352,0.333572,0.395399,0.312983,0.611427,0.320692,0.266176,0.397446,0.404299,0.359836,0.264012,0.389381,0.389161,0.307415,0.442877,0.361023,0.37281,0.313784,0.3076,0.396772,0.448788,0.388834],
+[0.358136,0.415134,0.358057,0.286383,0.28595,0.397962,0,0.0390178,0.362815,0.392294,0.463234,0.381137,0.582024,0.364436,0.399902,0.404493,0.41537,0.384014,0.415207,0.416879,0.415746,0.374781,0.373509,0.379283,0.384522,0.356606,0.374731,0.405261,0.387718,0.417918],
+[0.366613,0.420626,0.373202,0.287157,0.286863,0.415375,0.0390178,0,0.378988,0.408334,0.467271,0.387301,0.585307,0.380809,0.401145,0.404446,0.417253,0.388702,0.417834,0.421817,0.420108,0.38027,0.369157,0.390687,0.398211,0.366661,0.38033,0.405988,0.387873,0.415567],
+[0.35664,0.413166,0.111896,0.375439,0.374788,0.327352,0.362815,0.378988,0,0.196207,0.437892,0.324488,0.582991,0.108467,0.351106,0.402135,0.431008,0.38758,0.353222,0.397554,0.396724,0.327496,0.400778,0.189314,0.212132,0.305091,0.327303,0.391286,0.418551,0.394619],
+[0.374138,0.415479,0.181687,0.382729,0.382486,0.333572,0.392294,0.408334,0.196207,0,0.410814,0.309623,0.561973,0.16919,0.338337,0.415623,0.436042,0.395933,0.344467,0.398916,0.399428,0.318095,0.403473,0.207341,0.229243,0.315604,0.317789,0.407553,0.422598,0.38711],
+[0.461507,0.413918,0.451094,0.456033,0.456165,0.395399,0.463234,0.467271,0.437892,0.410814,0,0.447167,0.488834,0.433392,0.430525,0.491096,0.489855,0.431072,0.431531,0.44996,0.449768,0.441354,0.471812,0.452369,0.478654,0.4479,0.441295,0.489868,0.484535,0.284875],
+[0.359158,0.317255,0.321336,0.363876,0.363651,0.312983,0.381137,0.387301,0.324488,0.309623,0.447167,0,0.527786,0.318934,0.186678,0.344096,0.363493,0.307223,0.220149,0.382527,0.383624,0.0858641,0.321064,0.333246,0.343246,0.244735,0.0857946,0.33847,0.344172,0.345519],
+[0.559745,0.538876,0.589261,0.582571,0.582857,0.611427,0.582024,0.585307,0.582991,0.561973,0.488834,0.527786,0,0.587626,0.571629,0.576135,0.564742,0.586014,0.556123,0.519337,0.51866,0.52853,0.61639,0.561406,0.572801,0.596712,0.528485,0.576866,0.561655,0.566883],
+[0.361026,0.419526,0.0752346,0.370486,0.369788,0.320692,0.364436,0.380809,0.108467,0.16919,0.433392,0.318934,0.587626,0,0.342579,0.403264,0.426835,0.380718,0.352036,0.398315,0.398434,0.328948,0.394928,0.189741,0.209231,0.303491,0.328699,0.39316,0.413286,0.393065],
+[0.375623,0.33408,0.351958,0.370379,0.370273,0.266176,0.399902,0.401145,0.351106,0.338337,0.430525,0.186678,0.571629,0.342579,0,0.362681,0.350569,0.320216,0.115023,0.371377,0.372112,0.188687,0.355323,0.36542,0.373929,0.267225,0.188685,0.359137,0.392061,0.346791],
+[0.413252,0.320255,0.395296,0.382914,0.382953,0.397446,0.404493,0.404446,0.402135,0.415623,0.491096,0.344096,0.576135,0.403264,0.362681,0,0.340537,0.273639,0.378472,0.45352,0.452581,0.340102,0.277006,0.403893,0.415754,0.33528,0.340123,0.0582605,0.309115,0.411759],
+[0.430595,0.309129,0.417293,0.432172,0.432039,0.404299,0.41537,0.417253,0.431008,0.436042,0.489855,0.363493,0.564742,0.426835,0.350569,0.340537,0,0.272615,0.355831,0.452697,0.4526,0.359583,0.293232,0.434648,0.425685,0.368857,0.359552,0.334714,0.30657,0.378188],
+[0.401475,0.173601,0.370649,0.368729,0.36859,0.359836,0.384014,0.388702,0.38758,0.395933,0.431072,0.307223,0.586014,0.380718,0.320216,0.273639,0.272615,0,0.329047,0.46357,0.465221,0.310231,0.196823,0.395123,0.398746,0.287719,0.310125,0.278352,0.216015,0.316747],
+[0.391008,0.328386,0.35414,0.394768,0.394861,0.264012,0.415207,0.417834,0.353222,0.344467,0.431531,0.220149,0.556123,0.352036,0.115023,0.378472,0.355831,0.329047,0,0.393,0.393414,0.213086,0.379275,0.374954,0.397618,0.278529,0.213081,0.380574,0.410884,0.363119],
+[0.375855,0.459986,0.410341,0.42201,0.421864,0.389381,0.416879,0.421817,0.397554,0.398916,0.44996,0.382527,0.519337,0.398315,0.371377,0.45352,0.452697,0.46357,0.393,0,0.00559018,0.380088,0.501514,0.412963,0.420362,0.412004,0.380191,0.445651,0.488026,0.459576],
+[0.374249,0.460756,0.411059,0.419871,0.419725,0.389161,0.415746,0.420108,0.396724,0.399428,0.449768,0.383624,0.51866,0.398434,0.372112,0.452581,0.4526,0.465221,0.393414,0.00559018,0,0.381666,0.499747,0.413077,0.419438,0.410223,0.381761,0.444583,0.486919,0.459086],
+[0.353684,0.312257,0.32866,0.360233,0.360044,0.307415,0.374781,0.38027,0.327496,0.318095,0.441354,0.0858641,0.52853,0.328948,0.188687,0.340102,0.359583,0.310231,0.213086,0.380088,0.381666,0,0.326609,0.339163,0.351731,0.244947,4.15883e-05,0.33644,0.345221,0.347777],
+[0.447421,0.236943,0.378672,0.379987,0.379764,0.442877,0.373509,0.369157,0.400778,0.403473,0.471812,0.321064,0.61639,0.394928,0.355323,0.277006,0.293232,0.196823,0.379275,0.501514,0.499747,0.326609,0,0.403767,0.408602,0.323784,0.326463,0.278008,0.173229,0.288914],
+[0.390413,0.431279,0.201189,0.393039,0.392382,0.361023,0.379283,0.390687,0.189314,0.207341,0.452369,0.333246,0.561406,0.189741,0.36542,0.403893,0.434648,0.395123,0.374954,0.412963,0.413077,0.339163,0.403767,0,0.152463,0.339284,0.338859,0.39149,0.406238,0.410138],
+[0.377105,0.436753,0.210534,0.389457,0.388692,0.37281,0.384522,0.398211,0.212132,0.229243,0.478654,0.343246,0.572801,0.209231,0.373929,0.415754,0.425685,0.398746,0.397618,0.420362,0.419438,0.351731,0.408602,0.152463,0,0.34352,0.351603,0.399087,0.39898,0.431829],
+[0.333352,0.311363,0.30192,0.326299,0.326007,0.313784,0.356606,0.366661,0.305091,0.315604,0.4479,0.244735,0.596712,0.303491,0.267225,0.33528,0.368857,0.287719,0.278529,0.412004,0.410223,0.244947,0.323784,0.339284,0.34352,0,0.244934,0.330252,0.342226,0.396886],
+[0.353627,0.31223,0.328404,0.360351,0.360162,0.3076,0.374731,0.38033,0.327303,0.317789,0.441295,0.0857946,0.528485,0.328699,0.188685,0.340123,0.359552,0.310125,0.213081,0.380191,0.381761,4.15883e-05,0.326463,0.338859,0.351603,0.244934,0,0.33647,0.345174,0.34769],
+[0.409261,0.32039,0.381596,0.380847,0.380894,0.396772,0.405261,0.405988,0.391286,0.407553,0.489868,0.33847,0.576866,0.39316,0.359137,0.0582605,0.334714,0.278352,0.380574,0.445651,0.444583,0.33644,0.278008,0.39149,0.399087,0.330252,0.33647,0,0.308304,0.407949],
+[0.437695,0.253317,0.400299,0.395653,0.395366,0.448788,0.387718,0.387873,0.418551,0.422598,0.484535,0.344172,0.561655,0.413286,0.392061,0.309115,0.30657,0.216015,0.410884,0.488026,0.486919,0.345221,0.173229,0.406238,0.39898,0.342226,0.345174,0.308304,0,0.319593],
+[0.44834,0.293326,0.399918,0.419695,0.419972,0.388834,0.417918,0.415567,0.394619,0.38711,0.284875,0.345519,0.566883,0.393065,0.346791,0.411759,0.378188,0.316747,0.363119,0.459576,0.459086,0.347777,0.288914,0.410138,0.431829,0.396886,0.34769,0.407949,0.319593,0]];
+   for(var genomeIdx=0; genomeIdx<genomeNameArr.length; genomeIdx++) genomeNameIdxMap[genomeNameArr[genomeIdx]] = genomeIdx;
+   console.log("genome info finish loading!");
+   
+   $(function() { $( "#cutoffSlider" ).slider({ value:1, min: 0, max: 1, step: 0.01, slide: function( event, ui ) { $( "#cutoffAmount" ).val( ui.value ); cutoff = ui.value; } }); });
+   
+   $("#listbox").jqxListBox({width: 290, height: 600, source: genomeNameArr, checkboxes: true, filterable: true});
+		$("#listbox").on('checkChange', function (event) {
+			var items = $("#listbox").jqxListBox('getCheckedItems');
+			checkedGenomeIdxArr = []; checkedGenomeArr = [];
+			$.each(items, function (index) { checkedGenomeIdxArr.push(this.index); checkedGenomeArr.push(this.label); });
+			
+			if(checkedGenomeIdxArr.length > 0) $("#okBtn").prop('disabled', false);
+			else $("#okBtn").prop('disabled', true);
+   });
+   
+   
+	var minDist = 1, maxDist = 0, gap=0;
+	for(var rowIdx=0; rowIdx<genomeMat.length; rowIdx++) 
+	{
+		for(var colIdx=0; colIdx<genomeMat[0].length; colIdx++)
+		{
+			if(genomeMat[rowIdx][colIdx]<minDist) minDist = genomeMat[rowIdx][colIdx];
+			if(genomeMat[rowIdx][colIdx]>maxDist) maxDist = genomeMat[rowIdx][colIdx];
+		}
+	}
+	minDist = Math.max(0,minDist-0.1); maxDist = Math.min(1,maxDist+0.1); gap = maxDist-minDist;
+	var colorScale = d3.scale.quantile().domain([minDist,maxDist]).range(colors);
+	
+	
+	console.log("container-id-1 width: " + $("#container-id-1").width());
+	console.log("dashboard width: " + $("#dashboard").width());
+	console.log("vizcontainer width: " + $("#vizcontainer").width());
+	
+	containerWidth = $("#container-id-1").width()-$("#dashboard").width()-100;
+	$("#vizcontainer").css("width", containerWidth);
+
+	function updateData() {
+		
+		edgeData =[];
+		for(var rowIdx=0; rowIdx<checkedGenomeIdxArr.length; rowIdx++) {
+			for(var colIdx=0; colIdx<checkedGenomeIdxArr.length; colIdx++) {
+				
+				edgeData.push({"row":rowIdx, "col":colIdx, 
+				"value":genomeMat[checkedGenomeIdxArr[rowIdx]][checkedGenomeIdxArr[colIdx]]<=cutoff?genomeMat[checkedGenomeIdxArr[rowIdx]][checkedGenomeIdxArr[colIdx]]:1});
+				
+			}
+		}
+	
+		var cellSize = 25, legendElementWidth = cellSize*2, 
+			width = Math.max(checkedGenomeIdxArr.length*cellSize, containerWidth ), height = Math.max(checkedGenomeIdxArr.length*cellSize, 1000 );
+		
+		
+		d3.selectAll(".canvasSvg").remove(); 
+		var svg = d3.select("#heatCanvas").style("float", "left").attr("width", width).attr("height", height)
+			.append("g").attr('class', "canvasSvg").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+		var rowLabels = svg.append("g").selectAll(".rowLabelg").data(checkedGenomeArr).enter().append("text")
+			.text(function (d) { return d; }).attr("x", 0).attr("y", function (d, i) { return i * cellSize; })
+      		.style("text-anchor", "end").attr("transform", "translate(-6," + cellSize / 1.5 + ")")
+      		.attr("class", function (d,i) { return "rowLabel mono r"+i;} ) ;
+      		
+      	var colLabels = svg.append("g").selectAll(".colLabelg").data(checkedGenomeArr).enter().append("text")
+      		.text(function (d) { return d; }).attr("x", 0).attr("y", function (d, i) { return i * cellSize; })
+      		.style("text-anchor", "left").attr("transform", "translate("+cellSize/2 + ",-6) rotate (-90)")
+      		.attr("class",  function (d,i) { return "colLabel mono c"+i;} );
+      	
+      	var heatMap = svg.append("g").attr("class","g3").selectAll(".cellg").data(edgeData).enter().append("rect")
+			.attr("x", function(d) { return d.col * cellSize; }).attr("y", function(d) { return d.row * cellSize; })
+        	.attr("class", function(d){return "cell cell-border cr"+(d.row)+" cc"+(d.col);})
+        	.attr("width", cellSize).attr("height", cellSize).style("fill", function(d) { return colorScale(d.value); })
+			.on("mouseover", function(d){
+				d3.selectAll(".cell").filter(function(el) {return d.row == el.row || d.col == el.col; }).classed("cell-hover",true);
+				d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return ri==d.row;});
+				d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return ci==d.col;});
+				
+				d3.select("#tooltip1").style("left", (d3.event.pageX+10) + "px").style("top", (d3.event.pageY-10) + "px")
+					.html("distance:"+d.value);  
+                d3.select("#tooltip1").classed("hidden", false);
+			})
+			.on("mouseout", function(d){
+				d3.selectAll(".cell").filter(function(el) {return d.row == el.row || d.col == el.col; }).classed("cell-hover",false);
+				d3.selectAll(".rowLabel").classed("text-highlight",false);
+				d3.selectAll(".colLabel").classed("text-highlight",false);
+				d3.select("#tooltip1").classed("hidden", true);
+			});
+      		
+      	var legend = svg.selectAll(".legend").data([minDist,minDist+0.1*gap,minDist+0.2*gap,minDist+0.3*gap,minDist+0.4*gap,minDist+0.5*gap,minDist+0.6*gap,minDist+0.7*gap,minDist+0.8*gap,minDist+0.9*gap,maxDist]).enter().append("g").attr("class", "legend");
+		legend.append("rect").attr("x", function(d, i) { return legendElementWidth * i-margin.left; }).attr("y", (cellSize*2) - margin.top)
+    		.attr("width", legendElementWidth).attr("height", cellSize)
+    		.style("fill", function(d, i) { return colors[i]; });
+    
+    	legend.append("text").text(function(d) { return d3.format(".2f")(d); }).style("text-anchor", "left")
+    		.attr("x", function(d, i) { return legendElementWidth * i-margin.left; }).attr("y", (cellSize*4)- margin.top);
+	}
+	
+	
+
+</script>
+
+</body>
+</html>
