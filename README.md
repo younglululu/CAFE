@@ -1,9 +1,9 @@
-# UltASeqAn
-Ultra-fast Alignment-Free Sequence Analysis
+# CAFE
+aCcelerated Alignment-FrEe sequence analysis
 
 ===================
 
-Thank you for downloading this tool for sequence distance/dissimialrity measures using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute measures including Euclidian distance (Eu), Manhattan distance (Ma), Chebyshev distance (Ch), Jensen-Shannon divergence (JS), d2 dissimilarity, d2\* dissimilarity, d2S dissimilarity, Hao dissimilarity (CVtree). Please refer to the paper for the detailed definitions. The output of UltASeqAn can be simply pairwise distance matrix. UltASeqAn can also project the distance matrix to a two-dimensional space using principal coordinate analysis (PCoA). Alternatively, UltASeqAn uses neighbour-joining algorithm to cluster the distance matrix into phylogenetic tree in Newick format or convert the distance matrix as network in Cytoscape format. Finally, UltASeqAn provides user-friendly visualization of pairwise distances in terms of heatmap. 
+Thank you for downloading this tool for sequence distance/dissimialrity measures using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute measures including Euclidian distance (Eu), Manhattan distance (Ma), Chebyshev distance (Ch), Jensen-Shannon divergence (JS), d2 dissimilarity, d2\* dissimilarity, d2S dissimilarity, Hao dissimilarity (CVtree). Please refer to the paper for the detailed definitions. The output of CAFE can be simply pairwise distance matrix. CAFE can also project the distance matrix to a two-dimensional space using principal coordinate analysis (PCoA). Alternatively, CAFE uses neighbour-joining algorithm to cluster the distance matrix into phylogenetic tree in Newick format or convert the distance matrix as network in Cytoscape format. Finally, CAFE provides user-friendly visualization of pairwise distances in terms of heatmap. 
 
 
 ----------
@@ -11,7 +11,7 @@ Thank you for downloading this tool for sequence distance/dissimialrity measures
 Compatibility
 -------------
 
-The software is written in c++, which has been fully tested under gcc version 4.8.1. It works under Linux or Mac environment. Precompiled executables are provided for these platforms, and users have the option to compile the source code for their specific platform if desired (see the Installation section below).
+The software is written in c++, which has been fully tested under gcc version 4.8.1. It works under Windows, Linux or Mac environment. Precompiled executables are provided for these platforms, and users have the option to compile the source code for their specific platform if desired (see the Installation section below).
 
 ----------
 
@@ -28,7 +28,7 @@ Usage
 -------------------
 
 
-> **Command:  ** ./UltASeqAn [options]* -D  < dist > -I < fa_files > -J < jfexe_path > -K  < intK >
+> **Command:  ** ./cafe [options]* -D  < dist > -I < fa_files > -J < jfexe_path > -K  < intK >
 
 > - Main arguments:
 	- **-D** < dist >  Comma-separated list of distance measurements, the options include: D2-LongSeq, D2-NGS, D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS, L1, L2, LInf, Hao and JS. **E.g.** -D D2star-LongSeq,L1,Hao.
@@ -45,9 +45,9 @@ Usage
 	- **-V** < dir > Save visualization result to the folder <dir>
 
 > - Examples:
-	- ./UltASeqAn -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
-	- ./UltASeqAn -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
-	- ./UltASeqAn -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
+	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
+	- ./cafe -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
+	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
 
 
 A test example
@@ -59,7 +59,7 @@ You can find a folder named "example" in the package, which contains 30 virus ge
 Visualization
 ---------------
 
-UltASeqAn provides a convenient way to visualize and analyze output result through browser. In particular, for each distance/dissimialrity measure, a corresponding webpage named '[measure Name]_k_[k]_main.html' will be generated under the output folder. The visualization mainly contains two parts: (1) select the interested genomes to manipulate from the left panel; (2) plot the distance heatmap between interested genomes in the right panel. Users can further look at detailed information by moving the mouse over the corresponding grid;
+CAFE provides a convenient way to visualize and analyze output result through browser. In particular, for each distance/dissimialrity measure, a corresponding webpage named '[measure Name]_k_[k]_main.html' will be generated under the output folder. The visualization mainly contains two parts: (1) select the interested genomes to manipulate from the left panel; (2) plot the distance heatmap between interested genomes in the right panel. Users can further look at detailed information by moving the mouse over the corresponding grid;
 
 <p align="center">
   <img src="example/visualization/snapshot.jpg"/>

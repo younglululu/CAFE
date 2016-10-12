@@ -14,11 +14,11 @@
 
 void print_usage_and_exit()
 {
-	printf("UltASeqAn:\t Ultra-fast Alignment-free Sequence Analysis\n");
+	printf("CAFE:\t aCcelerated Alignment-FrEe sequence analysis\n");
 	printf("Description:\t The program provides multiple alignment-free sequence distance measures, including d2, d2star, d2shepp, Manhattan (Ma), Euclidean (Eu), Chebyshev (Ch), CVtree (Hao) and Jensen-Shannon divergence (JS).\n");
 	printf("Authors:\t Yang Lu and Prof. Fengzhu Sun, Computational and Molecular Biology, University of Southern California.\n");
 	printf("\nusage:\n");
-	printf("./UltASeqAn [options]* -D <dist> -I <fa_files> -J <jfexe_path> -K <intK>\n");
+	printf("./cafe [options]* -D <dist> -I <fa_files> -J <jfexe_path> -K <intK>\n");
 	printf("\nMain arguments\n");
 	printf("\t-D <dist>\tComma-separated list of distance measurements, the options include: D2-LongSeq, D2-NGS, D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS, Eu, Ma, Ch, Hao, CHISQ, and JS. E.g. -D D2star-LongSeq,Ma,Hao. \n");
 	printf("\t-I <fa_files>\tComma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option. \n");
@@ -32,9 +32,9 @@ void print_usage_and_exit()
 	printf("\t-T <type>\tThe output type as the input to downstream analysis, including: plain, phylip (as hierarchical clustering), cytoscape (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain. \n");
 	printf("\t-V <dir>\tSave visualization result to the folder <dir>. \n");
 	printf("\nExamples:\n");
-	printf("\t./UltASeqAn -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
-	printf("\t./UltASeqAn -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
-	printf("\t./UltASeqAn -M 0 -L 2 -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
+	printf("\t./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
+	printf("\t./cafe -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
+	printf("\t./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
 	printf("\n");
 	exit(0);
 }
