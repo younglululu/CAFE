@@ -618,7 +618,7 @@ namespace smat
 				s += (v[i][j] - m)*(v[i][j] - m);
 			}
 		}
-		s = s / rows_ / columns;
+		s = (s / rows_) / columns_;
 		return sqrt(s);
 	}
 
