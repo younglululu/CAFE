@@ -20,21 +20,22 @@ void print_usage_and_exit()
 	printf("\nusage:\n");
 	printf("./cafe [options]* -D <dist> -I <fa_files> -J <jfexe_path> -K <intK>\n");
 	printf("\nMain arguments\n");
-	printf("\t-D <dist>\tComma-separated list of distance measurements, the options include: D2-LongSeq, D2-NGS, D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS, Eu, Ma, Ch, Hao, CHISQ, and JS. E.g. -D D2star-LongSeq,Ma,Hao. \n");
+	printf("\t-D <dist>\tComma-separated list of distance measurements, the options include: D2, D2star, D2shepp, Eu, Ma, Ch, Hao, CHISQ, and JS. E.g. -D D2star,Ma,Hao. \n");
 	printf("\t-I <fa_files>\tComma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option. \n");
 	printf("\t-J <jfexe_path>\tUse jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish \n");
 	printf("\t-K <intK>\tKmer Length\n");
 	printf("\nOptions\n");
-	printf("\t-L <lower-count>\tOnly consider k-mer with occurrence >= <lower-count>. The default value is 0. \n");
-	printf("\t-M <order>\tMarkov Order involved in D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).\n");
+	printf("\t-L <lower>\tOnly consider k-mer with occurrence >= <lower>. The default value is 0. \n");
+	printf("\t-M <order>\tMarkov Order involved in D2star and D2shepp. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).\n");
+	printf("\t-R \t\tConsider Reverse Complement in kmer counting. \n");
 	printf("\t-S <dir>\tSave/Load calculated k-mer count binary files to the folder <dir>. Each input fasta file corresponds to particular model. \n");
 	printf("\t-O <path>\tOutput results to file at <path> \n");
 	printf("\t-T <type>\tThe output type as the input to downstream analysis, including: plain, phylip (as hierarchical clustering), cytoscape (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain. \n");
 	printf("\t-V <dir>\tSave visualization result to the folder <dir>. \n");
 	printf("\nExamples:\n");
-	printf("\t./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
-	printf("\t./cafe -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
-	printf("\t./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,Ma\n");
+	printf("\t./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma\n");
+	printf("\t./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma\n");
+	printf("\t./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma -R\n");
 	printf("\n");
 	exit(0);
 }
@@ -55,7 +56,7 @@ int main(int argc, char* argv[])
 
 	int i_k = 0, i_lowerCnt = 0;
 	OUTPUT_TYPE outputType = PLAIN;
-	bool singleStrain = false, containChiSq = false, jellyfishValid = true;
+	bool singleStrain = true, containChiSq = false, containHao = false, jellyfishValid = true;
 	std::string str_save_modelDir = "", str_save_vizDir = "", str_outputFileURL = "", str_jellyfishExeURL = "";
 	
 	if (argc < 2 || !strcmp(argv[1], "-help") || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--usage")) print_usage_and_exit();
@@ -71,7 +72,12 @@ int main(int argc, char* argv[])
 		else if (!strcmp(argv[i], "-J") || !strcmp(argv[i], "-j"))
 		{
 			str_jellyfishExeURL = std::string(argv[++i]);
-			if (!file_exists(str_jellyfishExeURL)) { jellyfishValid = false; std::cout << "[error]: Jellyfish executable file not exist at " << str_jellyfishExeURL << std::endl; }
+			if (!file_exists(str_jellyfishExeURL)) 
+			{ 
+				jellyfishValid = false; 
+				std::cout << "[error]: Jellyfish executable file not exist at " << str_jellyfishExeURL << std::endl; 
+				print_usage_and_exit();
+			}
 		}
 		else if (!strcmp(argv[i], "-T") || !strcmp(argv[i], "-t"))
 		{
@@ -85,33 +91,49 @@ int main(int argc, char* argv[])
 		else if (!strcmp(argv[i], "-D") || !strcmp(argv[i], "-d"))
 		{
 			split(std::string(argv[++i]), ",", vec_distStr);
+		}
+		else if (!strcmp(argv[i], "-R") || !strcmp(argv[i], "-r")) { singleStrain = false; }
+	}
 
-			for (int j = 0; j < vec_distStr.size(); ++j)
-			{
-				if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2-longseq")) vec_dist.push_back(D2_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2-ngs")) vec_dist.push_back(D2_NGS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2star-longseq")) vec_dist.push_back(D2STAR_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2star-ngs")) vec_dist.push_back(D2STAR_NGS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2shepp-longseq")) vec_dist.push_back(D2SHEPP_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2shepp-ngs")) vec_dist.push_back(D2SHEPP_NGS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ma")) vec_dist.push_back(Ma_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "eu")) vec_dist.push_back(Eu_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ch")) vec_dist.push_back(Ch_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "hao")) vec_dist.push_back(HAO_LS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "js")) vec_dist.push_back(JS);
-				else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "chisq")) 
-				{ 
-					vec_dist.push_back(CHISQ_LS);
-					containChiSq = true;
-				}
-				else
-				{
-					printf("[warning]: The distance measurement %s is unrecognized!\n ", vec_distStr[j].c_str());
-					vec_distStr.erase(vec_distStr.begin() + j);
-				}
-			}
+	for (int j = 0; j < vec_distStr.size(); ++j)
+	{
+		if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2"))
+		{
+			if (singleStrain) { vec_dist.push_back(D2_LS); }
+			else vec_dist.push_back(D2_NGS);
+		}
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2star"))
+		{
+			if (singleStrain) { vec_dist.push_back(D2STAR_LS); }
+			else vec_dist.push_back(D2STAR_NGS);
+		}
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "d2shepp"))
+		{
+			if (singleStrain) { vec_dist.push_back(D2SHEPP_LS); }
+			else vec_dist.push_back(D2SHEPP_NGS);
+		}
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ma")) vec_dist.push_back(Ma_LS);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "eu")) vec_dist.push_back(Eu_LS);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ch")) vec_dist.push_back(Ch_LS);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "hao"))
+		{
+			containHao = true;
+			vec_dist.push_back(HAO_LS);
+		}
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "js")) vec_dist.push_back(JS);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "chisq"))
+		{
+			vec_dist.push_back(CHISQ_LS);
+			containChiSq = true;
+		}
+		else
+		{
+			printf("[warning]: The distance measurement %s is unrecognized!\n ", vec_distStr[j].c_str());
+			vec_distStr.erase(vec_distStr.begin() + j);
 		}
 	}
+
+
 
 	if (!str_save_modelDir.empty() && !dir_exists(str_save_modelDir)) { std::string cmd = "mkdir " + str_save_modelDir; system(cmd.c_str()); }
 
@@ -127,6 +149,12 @@ int main(int argc, char* argv[])
 	if (i_k <= 0)
 	{
 		printf("[error]: Kmer length should be positive! ");
+		print_usage_and_exit();
+	}
+
+	if (i_k <= 2 && containHao)
+	{
+		printf("[error]: Kmer length must exceed 2 in CVTree! ");
 		print_usage_and_exit();
 	}
 
@@ -174,6 +202,8 @@ int main(int argc, char* argv[])
 		std::vector<int> cachedOrderVec;
 		if (containChiSq) cachedOrderVec.push_back(i_k + 1);
 		cachedOrderVec.push_back(i_k);
+		if (containHao) { cachedOrderVec.push_back(i_k - 1); cachedOrderVec.push_back(i_k - 2); }
+
 		if (0 == order) cachedOrderVec.push_back(1);
 		else if (order > 0) { cachedOrderVec.push_back(order + 1); cachedOrderVec.push_back(order); }
 		else { for (int minOrder = i_k-1; minOrder > 0 ; --minOrder) cachedOrderVec.push_back(minOrder); }
@@ -311,6 +341,12 @@ int main(int argc, char* argv[])
 		///start visualization
 		std::string str_saveVizTemp = str_save_vizDir;
 		if (!str_saveVizTemp.empty() && !endsWith(str_saveVizTemp, "/")) str_saveVizTemp.append("/");
+
+		std::string cpCMD1 = "cp -r res/lib " + str_saveVizTemp; system(cpCMD1.c_str());
+		std::string cpCMD2 = "cp -r res/css " + str_saveVizTemp; system(cpCMD2.c_str());
+		std::string cpCMD3 = "cp res/logo.jpg " + str_saveVizTemp; system(cpCMD3.c_str());
+
+
 		str_saveVizTemp.append(vec_distStr[distIdx]).append("_k_").append(std::to_string(i_k)).append("_main.html_part2");
 		std::ofstream html2Out(str_saveVizTemp.c_str());
 
@@ -336,6 +372,8 @@ int main(int argc, char* argv[])
 
 		std::string catCMD = "cat res/main.html_part1 " + str_saveVizTemp + " res/main.html_part3 > " + str_outputVizURL;
 		system(catCMD.c_str());
+		std::string rmCMD = "rm " + str_saveVizTemp;
+		system(rmCMD.c_str());
 		///end visualization
 
 		endTime = clock();

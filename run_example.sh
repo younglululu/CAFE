@@ -1,0 +1,5 @@
+#! /bin/bash
+
+chmod 777 bin/linux64/./cafe
+
+bin/linux64/./cafe -M 0 -S example/hash -I example/data/AB002632.fasta,example/data/AB008550.fasta,example/data/AB009866.fasta,example/data/AB012573.fasta,example/data/AB012574.fasta,example/data/AB016282.fasta,example/data/AB043678.fasta,example/data/AB043679.fasta,example/data/AB044554.fasta,example/data/AB045978.fasta,example/data/AB063393.fasta,example/data/AB102868.fasta,example/data/AB231700.fasta,example/data/AB243556.fasta,example/data/AB255436.fasta,example/data/AB259123.fasta,example/data/AB259124.fasta,example/data/AB276040.fasta,example/data/AB285204.fasta,example/data/AB334720.fasta,example/data/AB334721.fasta,example/data/AB362338.fasta,example/data/AB366653.fasta,example/data/AB370205.fasta,example/data/AB370268.fasta,example/data/AB374228.fasta,example/data/AB426868.fasta,example/data/AB434711.fasta,example/data/AB451219.fasta,example/data/AB472900.fasta -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 6 -D Ma,D2star -V example/viz/

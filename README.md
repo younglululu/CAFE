@@ -15,6 +15,13 @@ The software is written in c++, which has been fully tested under gcc version 4.
 
 ----------
 
+Dependency
+-------------
+
+The software relies on JELLYFISH (http://www.cs.cmu.edu/~ckingsf/software/jellyfish/) to count kmer efficiently. 
+
+----------
+
 Installation
 -------------------
 
@@ -31,23 +38,24 @@ Usage
 > **Command:  ** ./cafe [options]* -D  < dist > -I < fa_files > -J < jfexe_path > -K  < intK >
 
 > - Main arguments:
-	- **-D** < dist >  Comma-separated list of distance measurements, the options include: D2-LongSeq, D2-NGS, D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS, L1, L2, LInf, Hao and JS. **E.g.** -D D2star-LongSeq,L1,Hao.
+	- **-D** < dist >  Comma-separated list of distance measurements, the options include: D2, D2star, D2shepp, Manhattan (Ma), Euclidean (Eu), Chebyshev (Ch), CVtree (Hao) and Jensen-Shannon divergence (JS). **E.g.** -D D2star,Ma,Hao.
 	- **-I** < fa_files > Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
 	- **-J** < jfexe_path > Use jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish
-	- **-K** < intK > Kmer Length
+	- **-K** < intK > Kmer Length.
 
 > - Options:
-	- **-L** < lower_count > Only consider k-mer with occurrence >= <lower_count>. The default value is 1.
-	- **-M** < order > Markov Order involved in D2star-LongSeq, D2star-NGS, D2shepp-LongSeq, D2shepp-NGS and JS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).
+	- **-L** < lower > Only consider k-mer with occurrence >= <lower>. The default value is 1.
+	- **-M** < order > Markov Order involved in D2star, D2shepp and JS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).
+	- **-R** Consider Reverse Complement in kmer counting.
 	- **-S** < dir > Save/Load calculated k-mer count binary files to the folder < dir >. Each input fasta file corresponds to particular model.
-	- **-O** < path > Output results to file at < path >
+	- **-O** < path > Output results to file at < path >.
 	- **-T** < type > The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
-	- **-V** < dir > Save visualization result to the folder <dir>
+	- **-V** < dir > Save visualization result to the folder <dir>.
 
 > - Examples:
-	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
-	- ./cafe -M 1,A -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
-	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star-LongSeq,L1,Hao
+	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao
+	- ./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao
+	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao -R
 
 
 A test example
