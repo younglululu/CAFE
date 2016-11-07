@@ -230,16 +230,18 @@ int main(int argc, char* argv[])
 					std::string lowerCntStr = " -L " + std::to_string(i_lowerCnt);
 					if (i_lowerCnt < 2) lowerCntStr = "";
 
-					std::string cmd1 = str_jellyfishExeURL + " count -m " + std::to_string(currK) + " -s 100M -t 20" + lowerCntStr + " -o " + str_jfBinURL + " " + vec_fastaFiles[i];
+					std::string cmd1 = str_jellyfishExeURL + " count -m " + std::to_string(currK) + " -s 500M -t 20" + lowerCntStr + " -o " + str_jfBinURL + " " + vec_fastaFiles[i];
 					system(cmd1.c_str());  std::cout << "Execute Command: " << cmd1 << std::endl;
 
-					if (file_exists(str_jellyfishExeURL))
+					if (file_exists(str_jfBinURL))
 					{
+						std::cout << "Jellyfish succeed in count!" << std::endl;
 						std::string cmd2 = str_jellyfishExeURL + " dump -t " + str_jfBinURL + lowerCntStr + " > " + str_jfTabTxtURL;
 						system(cmd2.c_str());  std::cout << "Execute Command: " << cmd2 << std::endl;
 
 						if (file_exists(str_jfTabTxtURL))
 						{
+							std::cout << "Jellyfish succeed in dump!" << std::endl;
 							kmerModel->saveFromJellyFish(str_jfTabTxtURL, str_saveURL);
 							jellyfishSucceed = true;
 						}
