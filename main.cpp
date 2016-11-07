@@ -221,6 +221,7 @@ int main(int argc, char* argv[])
 			KmerModel* kmerModel = new KmerModel(currK, true);
 			if (0 == orderIdx)
 			{
+				bool jellyfishSucceed = false;
 				if (jellyfishValid)
 				{
 					std::string str_jfBinURL = str_saveURL; str_jfBinURL.append(".jf");
@@ -232,13 +233,22 @@ int main(int argc, char* argv[])
 					std::string cmd1 = str_jellyfishExeURL + " count -m " + std::to_string(currK) + " -s 100M -t 20" + lowerCntStr + " -o " + str_jfBinURL + " " + vec_fastaFiles[i];
 					system(cmd1.c_str());  std::cout << "Execute Command: " << cmd1 << std::endl;
 
-					std::string cmd2 = str_jellyfishExeURL + " dump -t " + str_jfBinURL + lowerCntStr + " > " + str_jfTabTxtURL;
-					system(cmd2.c_str());  std::cout << "Execute Command: " << cmd2 << std::endl;
+					if (file_exists(str_jellyfishExeURL))
+					{
+						std::string cmd2 = str_jellyfishExeURL + " dump -t " + str_jfBinURL + lowerCntStr + " > " + str_jfTabTxtURL;
+						system(cmd2.c_str());  std::cout << "Execute Command: " << cmd2 << std::endl;
 
-					kmerModel->saveFromJellyFish(str_jfTabTxtURL, str_saveURL);
+						if (file_exists(str_jfTabTxtURL))
+						{
+							kmerModel->saveFromJellyFish(str_jfTabTxtURL, str_saveURL);
+							jellyfishSucceed = true;
+						}
+					}
 				}
-				else
+				
+				if (!jellyfishSucceed)
 				{
+					std::cout << "Jellyfish not succeed! Now use slow counting!" << std::endl;
 					kmerModel->saveFromFasta(currK, vec_fastaFiles[i], str_saveURL);
 				}
 			}

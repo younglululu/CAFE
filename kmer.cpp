@@ -635,7 +635,11 @@ bool KmerModel::saveFromFasta(int i_arg_k, std::string str_arg_fastaFileURL, std
 		while (getline(fastaStream, str_tmp_line))
 		{
 			if (str_tmp_line.empty() || "" == str_tmp_line) continue;
-			if (str_tmp_line.substr(0, 1) == ">") continue;
+			if (str_tmp_line.substr(0, 1) == ">")
+			{
+				totalCharCnt = 0; currKmerIdx = 0;
+				continue;
+			}
 	
 			for (int i = 0; i < str_tmp_line.length(); ++i)
 			{
