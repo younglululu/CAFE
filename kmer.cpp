@@ -671,8 +671,8 @@ MarkovModel* KmerModel::getMarkovModel(int i_arg_order, std::string str_arg_save
 {
 	MarkovModel* tmp_mrkvModel = new MarkovModel(i_arg_order);
 
-	std::string str_orderURL = str_arg_saveURLPrefix + std::to_string(i_arg_order);
-	std::string str_orderPlusOneURL = str_arg_saveURLPrefix + std::to_string(i_arg_order + 1);
+	std::string str_orderURL = str_arg_saveURLPrefix + patch::to_string(i_arg_order);
+	std::string str_orderPlusOneURL = str_arg_saveURLPrefix + patch::to_string(i_arg_order + 1);
 
 	if ((!file_exists(str_orderURL) && i_arg_order > 0) || !file_exists(str_orderPlusOneURL))
 	{
@@ -734,7 +734,7 @@ int getEstMarkovOrder(int i_arg_k, std::string str_arg_saveURLPrefix, std::strin
 	std::cout << "Now estimating markov order for " << str_arg_seqName << " ..." << std::endl;
 
 	KmerModel* kmerModel = new KmerModel(i_arg_k, true);
-	kmerModel->load(i_arg_k, str_arg_saveURLPrefix + std::to_string(i_arg_k));
+	kmerModel->load(i_arg_k, str_arg_saveURLPrefix + patch::to_string(i_arg_k));
 	unsigned long l_totalKmer = kmerModel->totalKmer();
 	delete kmerModel;
 	kmerModel = new KmerModel(i_arg_k, true);
@@ -747,7 +747,7 @@ int getEstMarkovOrder(int i_arg_k, std::string str_arg_saveURLPrefix, std::strin
 		MarkovModel* markovModel = kmerModel->getMarkovModel(currOrder, str_arg_saveURLPrefix);
 
 		KmerModel* tmpKmerModel = new KmerModel(currOrder + 1, true);
-		tmpKmerModel->load(currOrder + 1, str_arg_saveURLPrefix + std::to_string(currOrder + 1));
+		tmpKmerModel->load(currOrder + 1, str_arg_saveURLPrefix + patch::to_string(currOrder + 1));
 
 		AbsIter* tmpkmerCntIter = IterFactory::getInstance()->getKmerCntIterator(i_arg_k, tmpKmerModel->kmerCntUnorderMap, tmpKmerModel->kmerVec, 1);
 

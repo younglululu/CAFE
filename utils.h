@@ -163,4 +163,14 @@ double log_subtract(double log_a, double log_b);
 
 bool almostEquals(double a, double b);
 
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
 #endif
