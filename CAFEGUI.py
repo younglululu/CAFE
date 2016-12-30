@@ -154,6 +154,7 @@ class GUIApp:
         self.thresVal.set(0)
         self.revComplVal.set(False)
         self.logURL = 'log.txt'
+        self.logURL_replicate = 'log1.txt'
         
         self.input_list = []
         self.label_list = []
@@ -354,7 +355,9 @@ class GUIApp:
             self.console_box.delete(1.0, 'end')
             
             if os.path.isfile(self.logURL):
-                log_lines = [line.rstrip('\n') for line in open(self.logURL)]
+                os.system("cp " + self.logURL + " " + self.logURL_replicate)  
+                
+                log_lines = [line.rstrip('\n') for line in open(self.logURL_replicate)]
                 for log_line in log_lines:
                     print(log_line)
                     message = log_line.encode('utf-8')
@@ -366,7 +369,7 @@ class GUIApp:
                     self.run_button.config(state='normal')
 
             self.console_box.config(state='disabled')
-            time.sleep(5)
+            time.sleep(1)
     
     def callViz(self):
         vizURL = "result."+self.distVal.get()+".phylip"
@@ -587,11 +590,8 @@ class GUIApp:
             tkMessageBox.showerror(APP_NAME,'Program cannot proceed when the input size <= 1')
             return
         
-        if os.path.isfile(self.logURL):
-            try:
-                os.remove(self.logURL)
-            except OSError:
-                pass  
+        os.system("rm " + self.logURL)
+        os.system("rm " + self.logURL_replicate)  
         
         self.checkConsoleT = threading.Thread(target=self.display_console)
         self.checkConsoleT.setDaemon(True)    
