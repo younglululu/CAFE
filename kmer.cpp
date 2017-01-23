@@ -85,6 +85,73 @@ double IterFactory::getFreqDist(AbsTupleDistStrategy* distStrategy,
 	return distStrategy->getDist();
 }
 
+double IterFactory::getCoPhylogDist(int i_arg_k, 
+		std::unordered_map<unsigned long long, unsigned long>* src_kmerCntUnorderMap, std::vector<unsigned long long>* src_kmerVec,
+		std::unordered_map<unsigned long long, unsigned long>* trgt_kmerCntUnorderMap, std::vector<unsigned long long>* trgt_kmerVec)
+{
+	int maskLen = i_arg_k; maskLen = (maskLen >> 1); maskLen = (maskLen << 1);
+	unsigned long long mask_low = ((unsigned long long)1 << maskLen) - 1;
+
+	std::unordered_map<unsigned long long, int>* src_context_dup = new std::unordered_map<unsigned long long, int>();
+	std::unordered_map<unsigned long long, int>* src_context_obj = new std::unordered_map<unsigned long long, int>();
+	//std::unordered_map<unsigned long long, double>* src_context_cnt = new std::unordered_map<unsigned long long, double>();
+	std::unordered_map<unsigned long long, int>* trgt_context_dup = new std::unordered_map<unsigned long long, int>();
+	std::unordered_map<unsigned long long, int>* trgt_context_obj = new std::unordered_map<unsigned long long, int>();
+	//std::unordered_map<unsigned long long, double>* trgt_context_cnt = new std::unordered_map<unsigned long long, double>();
+
+	AbsIter* src_CntIter = getKmerCntIterator(i_arg_k, src_kmerCntUnorderMap, src_kmerVec, 0);
+	AbsIter* trgt_CntIter = getKmerCntIterator(i_arg_k, trgt_kmerCntUnorderMap, trgt_kmerVec, 0);
+
+	while (src_CntIter->hasNext())
+	{
+		double src_X_w = *(*src_CntIter); unsigned long long src_kmer = src_CntIter->getCurrKmer(); (*src_CntIter)++; if (src_X_w <= 0) continue;
+		
+		unsigned long long kmer_low  = (src_kmer & mask_low);
+		unsigned long long kmer_high = (src_kmer >> maskLen);
+		int objVal = (kmer_high % BASE); kmer_high = (kmer_high >> 2);
+		unsigned long long kmer_new = ((kmer_high << maskLen) + kmer_low);
+
+		(*src_context_dup)[kmer_new] ++;
+		(*src_context_obj)[kmer_new] = objVal;
+		//(*src_context_cnt)[kmer_new] = src_X_w;
+	}
+
+	while (trgt_CntIter->hasNext())
+	{
+		double trgt_X_w = *(*trgt_CntIter); unsigned long long trgt_kmer = trgt_CntIter->getCurrKmer(); (*trgt_CntIter)++; if (trgt_X_w <= 0) continue;
+		
+		unsigned long long kmer_low  = (trgt_kmer & mask_low);
+		unsigned long long kmer_high = (trgt_kmer >> maskLen);
+		int objVal = (kmer_high % BASE); kmer_high = (kmer_high >> 2);
+		unsigned long long kmer_new = ((kmer_high << maskLen) + kmer_low);
+
+		(*trgt_context_dup)[kmer_new] ++;
+		(*trgt_context_obj)[kmer_new] = objVal;
+		//(*trgt_context_cnt)[kmer_new] = trgt_X_w;
+	}
+
+	double sum=0, hit=0;
+	for (std::unordered_map<unsigned long long, int>::iterator iter = src_context_dup->begin(); iter != src_context_dup->end(); iter++)
+	{
+		unsigned long long currKmerIdx = iter->first;
+		int objDup_src = (*src_context_dup)[currKmerIdx]; int objDup_trgt = (*trgt_context_dup)[currKmerIdx];
+		
+		if(1 == objDup_src && 1 == objDup_trgt) 
+		{
+			sum ++;
+			int obj_src = (*src_context_obj)[currKmerIdx]; int obj_trgt = (*trgt_context_obj)[currKmerIdx];
+			
+			if(obj_src != obj_trgt) hit ++;
+		}
+	}
+
+	delete src_CntIter; delete trgt_CntIter;
+	delete src_context_dup; delete src_context_obj; //delete src_context_cnt;
+	delete trgt_context_dup; delete trgt_context_obj; //delete trgt_context_cnt;
+	
+	if(0 == sum) return 0;
+	else return hit/sum;
+}
 
 double IterFactory::getCntDist(AbsTupleDistStrategy* distStrategy, int i_arg_lowerCnt,
 	std::unordered_map<unsigned long long, unsigned long>* src_kmerCntUnorderMap, std::vector<unsigned long long>* src_kmerVec,

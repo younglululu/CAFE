@@ -13,8 +13,8 @@
 
 enum dist{
 	D2, D2STAR, D2SHEPP, CVtree, 
-	Ch, Eu, Ma, 
-	CHISQ, JS,
+	Ch, Eu, Ma, FFP,
+	CHISQ, JS, Co_Phylog,
 	COSINE, PEARSON, CANBERRA, HAMMING,
 	MATCHING, JACCARD, TANIMOTO, DICE, ANTIDICE, SNEATH, HAMMAN, PHI, ANDERBERG, GOWER, RUSSEL, YULE, OCHIAI, KULCZYNSKI
 };
@@ -36,6 +36,21 @@ public:
 	L2FreqStrategy(int i_arg_k, bool b_arg_singleStrain) : AbsTupleDistStrategy(i_arg_k, b_arg_singleStrain){ d_result = 0; }
 	void dealWithTuple(double src_X_w, double trgt_X_w) { double d_tmp_diff = src_X_w - trgt_X_w; d_tmp_diff = d_tmp_diff*d_tmp_diff; d_result += d_tmp_diff; }
 	double getDist(){ return sqrt(d_result); }
+
+private:
+	double d_result;
+};
+
+class FFPStrategy : public AbsTupleDistStrategy
+{
+public:
+	FFPStrategy(int i_arg_k, bool b_arg_singleStrain) : AbsTupleDistStrategy(i_arg_k, b_arg_singleStrain){ d_result = 0; }
+	void dealWithTuple(double src_X_w, double trgt_X_w) 
+	{ 
+		if(0 == src_X_w || 0 == trgt_X_w) return;
+		d_result += src_X_w*(log(src_X_w)-log(trgt_X_w)) / LOG2; d_result += trgt_X_w*(log(trgt_X_w)-log(src_X_w)) / LOG2;
+	}
+	double getDist(){ return 0.5*d_result; }
 
 private:
 	double d_result;
@@ -268,6 +283,8 @@ public:
 	double getL2dist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
 	double getLInfdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
 	double getChiSqdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
+	double getFFPdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
+	double getCoPhylogdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
 
 	double getPearsondist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);
 	double getCanberradist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel);

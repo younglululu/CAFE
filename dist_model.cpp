@@ -113,6 +113,24 @@ double DistFactory::getLInfdist(int i_arg_k, bool b_arg_singleStrain, KmerModel*
 	return dist;
 }
 
+double DistFactory::getFFPdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel)
+{
+	FFPStrategy* strategy = new FFPStrategy(i_arg_k, b_arg_singleStrain);
+	double dist = IterFactory::getInstance()->getFreqDist(strategy, 
+		arg_srcKmerModel->kmerCntUnorderMap, arg_srcKmerModel->kmerVec, arg_srcKmerModel->totalKmer(),
+		arg_trgtKmerModel->kmerCntUnorderMap, arg_trgtKmerModel->kmerVec, arg_trgtKmerModel->totalKmer());
+
+	delete strategy;
+	return dist;
+}
+
+double DistFactory::getCoPhylogdist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel)
+{
+	double dist = IterFactory::getInstance()->getCoPhylogDist(i_arg_k, 
+		arg_srcKmerModel->kmerCntUnorderMap, arg_srcKmerModel->kmerVec, 
+		arg_trgtKmerModel->kmerCntUnorderMap, arg_trgtKmerModel->kmerVec);
+	return dist;
+}
 
 double DistFactory::getPearsondist(int i_arg_k, bool b_arg_singleStrain, KmerModel* arg_srcKmerModel, KmerModel* arg_trgtKmerModel)
 {

@@ -163,11 +163,13 @@ Usage of  Stand-alone Executable Program
 				 2. Canberra: Canberra distance
 				 3. Chisq: Chi-Square distance
 				 4. Cosine: Cosine distance
-				 5. D2: D2 distance
-				 6. Eu: Euclidean distance
-				 7. JS: Jensen-Shannon divergence
-				 8. Ma: Manhattan distance
-				 9. Pearson: Pearson distance
+				 5. Co-phylo: Co-phylog distance
+				 6. D2: D2 distance
+				 7. Eu: Euclidean distance
+				 8. FFP: Feature frequency profiles (FFP)
+				 9. JS: Jensen-Shannon divergence
+				 10. Ma: Manhattan distance
+				 11. Pearson: Pearson distance
 		 - Newly developed measures based on background adjusted kmer counts: 
 				 1. CVtree: CVtree distance
 				 2. D2shepp: D2shepp distance
@@ -199,7 +201,6 @@ Usage of  Stand-alone Executable Program
 	- **-S** < dir > Save/Load calculated k-mer count binary files to the folder < dir >. Each input fasta file corresponds to particular model.
 	- **-O** < path > Output results to file at < path >.
 	- **-T** < type > The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
-	- **-V** < dir > Save visualization result to the folder <dir>.
 
 > - Examples:
 	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao
@@ -213,14 +214,6 @@ A test example
 You can find a folder named "example" in the package, which contains 30 virus genomes. There are three subfolders, "data", "hash" and "visualization". The folder "data" contains 30 genome fasta files. The folder "hash" contains the corresponding binary kmer count files. The folder "visualization" contains the visualization-related files including web pages and associated javascript/css files.
 
 
-Optional light-weighted Visualization 
-=============
-
-For the stand-alone command line executable program, CAFE provides a light-weighted way to visualize and analyze output result through browser. In particular, for each distance/dissimialrity measure, a corresponding webpage named '[measure Name]_k_[k]_main.html' will be generated under the output folder. The visualization mainly contains two parts: (1) select the interested genomes to manipulate from the left panel; (2) plot the distance heatmap between interested genomes in the right panel. Users can further look at detailed information by moving the mouse over the corresponding grid;
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/snapshot.jpg"/>
-</p>
 
 ----------
 

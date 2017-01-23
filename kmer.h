@@ -173,6 +173,9 @@ public:
 
 	double getMrkvDist(AbsMrkvStrategy* distStrategy, MarkovModel* src_mrkvModel, MarkovModel* trgt_mrkvModel);
 
+	double getCoPhylogDist(int i_arg_k, 
+		std::unordered_map<unsigned long long, unsigned long>* src_kmerCntUnorderMap, std::vector<unsigned long long>* src_kmerVec,
+		std::unordered_map<unsigned long long, unsigned long>* trgt_kmerCntUnorderMap, std::vector<unsigned long long>* trgt_kmerVec);
 
 	AbsIter* getKmerCntIterator(int i_arg_k, std::unordered_map<unsigned long long, unsigned long>* arg_kmerCntUnorderMap, std::vector<unsigned long long>* arg_kmerVec, int i_arg_lowerCnt);
 	AbsIter* getKmerFreqIterator(int i_arg_k, std::unordered_map<unsigned long long, unsigned long>* arg_kmerCntUnorderMap, std::vector<unsigned long long>* arg_kmerVec, unsigned long l_arg_totalKmer);

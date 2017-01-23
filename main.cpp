@@ -15,7 +15,7 @@
 void print_usage_and_exit()
 {
 	printf("CAFE:\t aCcelerated Alignment-FrEe sequence analysis\n");
-	printf("Description:\t The program provides 27 alignment-free sequence distance measures.\n");
+	printf("Description:\t The program provides 29 alignment-free sequence distance measures.\n");
 	printf("Authors:\t Yang Lu and Prof. Fengzhu Sun, Computational and Molecular Biology, University of Southern California.\n");
 	printf("\nusage:\n");
 	printf("./cafe [options]* -D <dist> -I <fa_files> -K <intK>\n");
@@ -27,8 +27,10 @@ void print_usage_and_exit()
 	printf("\t\t Canberra: Canberra distance \n");
 	printf("\t\t Chisq: Chi-Square distance \n");
 	printf("\t\t Cosine: Cosine distance \n");
+	printf("\t\t Co-phylog: Co-phylog distance with the seed C_{(k-1)/2,(k-1)/2}O_{1} when k is odd or C_{k/2-1,k/2}O_{1} when k is even \n");
 	printf("\t\t D2: D2 distance \n");
 	printf("\t\t Eu: Euclidean distance \n");
+	printf("\t\t FFP: Feature frequency profiles (FFP) \n");
 	printf("\t\t JS: Jensen-Shannon divergence \n");
 	printf("\t\t Ma: Manhattan distance \n");
 	printf("\t\t Pearson: Pearson distance \n");
@@ -65,7 +67,7 @@ void print_usage_and_exit()
 	printf("\t-S <dir>\tSave/Load calculated k-mer count binary files to the folder <dir>. Each input fasta file corresponds to particular model. \n");
 	printf("\t-O <path>\tOutput results to file at <path> \n");
 	printf("\t-T <type>\tThe output type as the input to downstream analysis, including: plain, phylip (as hierarchical clustering), cytoscape (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain. \n");
-	printf("\t-V <dir>\tSave visualization result to the folder <dir>. \n");
+	//printf("\t-V <dir>\tSave visualization result to the folder <dir>. \n");
 	printf("\nExamples:\n");
 	printf("\t./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma\n");
 	printf("\t./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma\n");
@@ -139,6 +141,8 @@ int main(int argc, char* argv[])
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ma")) vec_dist.push_back(Ma);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "eu")) vec_dist.push_back(Eu);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ch")) vec_dist.push_back(Ch);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ffp")) vec_dist.push_back(FFP);
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "co-phylog")) vec_dist.push_back(Co_Phylog);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "cvtree ")) { containCvtree = true; vec_dist.push_back(CVtree); }
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "js")) vec_dist.push_back(JS);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "chisq")) { containChiSq = true; vec_dist.push_back(CHISQ); }
@@ -355,6 +359,8 @@ int main(int argc, char* argv[])
 				else if (Ma == currDist) distVal = DistFactory::getInstance()->getL1dist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (Eu == currDist) distVal = DistFactory::getInstance()->getL2dist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (Ch == currDist) distVal = DistFactory::getInstance()->getLInfdist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
+				else if (FFP == currDist) distVal = DistFactory::getInstance()->getFFPdist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
+				else if (Co_Phylog == currDist) distVal = DistFactory::getInstance()->getCoPhylogdist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (CHISQ == currDist) distVal = DistFactory::getInstance()->getChiSqdist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (PEARSON == currDist) distVal = DistFactory::getInstance()->getPearsondist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (CANBERRA == currDist) distVal = DistFactory::getInstance()->getCanberradist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
