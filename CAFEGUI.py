@@ -4,11 +4,10 @@ import threading
 import time
 import subprocess
 import platform
-from Tkinter import *
+#from Tkinter import *
+from mtTkinter import *
+import Tkconstants
 import tkFileDialog
-import tkSimpleDialog
-import tkCommonDialog
-import ScrolledText
 import tkMessageBox
 import ttk
 
@@ -163,6 +162,7 @@ class GUIApp:
         self.addDir_icon = PhotoImage(file='image/addDir.gif')
         self.remove_icon = PhotoImage(file='image/remove.gif')
         self.clear_icon = PhotoImage(file='image/clear.gif')
+        self.load_icon = PhotoImage(file='image/load.gif')
         #self.save_icon = PhotoImage(file='image/save.gif')
         self.setting_icon = PhotoImage(file='image/setting.gif')
         
@@ -179,6 +179,8 @@ class GUIApp:
     def create_menu(self):
         menu_bar = Menu(self.root)
         file_menu = Menu(menu_bar, tearoff=0)
+        file_menu.add_command(label='Load', compound='left', image=self.load_icon, command=self.on_load_button_clicked)
+        file_menu.add_separator()
         file_menu.add_command(label='Add File', compound='left', image=self.addFile_icon, command=self.on_addFile_button_clicked)
         file_menu.add_command(label='Add Dir', compound='left', image=self.addDir_icon, command=self.on_addDir_button_clicked)
         file_menu.add_command(label='Remove Selected', compound='left', image=self.remove_icon, command=self.on_remove_button_clicked)
@@ -193,12 +195,16 @@ class GUIApp:
         about_menu.add_separator()
         about_menu.add_command(label="About", command=self.about_app)
         about_menu.add_command(label="Help", command=self.help_app)
-        menu_bar.add_cascade(label='About', menu=about_menu)
+        menu_bar.add_cascade(label='Help', menu=about_menu)
         self.root.config(menu=menu_bar)
     
     def create_top_bar(self):
         topbar_frame = Frame(self.root, height=25)
         topbar_frame.grid(row=0, columnspan=20, rowspan=10, pady=5)
+        
+        load_button = ttk.Button(topbar_frame, image=self.load_icon, command=self.on_load_button_clicked)
+        load_button.grid(row=0, column=0)
+        createToolTip(load_button, 'Load Results')
         
         file_button = ttk.Button(topbar_frame, image=self.addFile_icon, command=self.on_addFile_button_clicked)
         file_button.grid(row=0, column=1)
@@ -221,7 +227,7 @@ class GUIApp:
         Label(topbar_frame, text='Distance:').grid(row=0, column=6)
         dist_combobox = ttk.Combobox(topbar_frame, width=10, textvariable=self.distVal)
         dist_combobox.grid(row=0, column=7)
-        dist_combobox['values'] = ('Anderberg','Antidice','Canberra','Ch','Chisq','Cosine','CVtree','Dice','D2','D2star','D2shepp','Eu','Gower','Hamman','Hamming','Jaccard','JS','Kulczynski','Ma','Matching','Ochiai','Pearson','Phi','Russel','Sneath','Tanimoto','Yule')
+        dist_combobox['values'] = ('Anderberg','Antidice','Canberra','Ch','Chisq','Cosine','Co-phylog','CVtree','Dice','D2','D2star','D2shepp','Eu','FFP','Gower','Hamman','Hamming','Jaccard','JS','Kulczynski','Ma','Matching','Ochiai','Pearson','Phi','Russel','Sneath','Tanimoto','Yule')
         dist_combobox.set('Ma')
         dist_combobox.bind('<<ComboboxSelected>>', self.on_dist_changed)
         
@@ -232,7 +238,7 @@ class GUIApp:
         
         Label(topbar_frame, text='Markov Order:').grid(row=0, column=10, padx=3)
         self.mVal.set(0)
-        self.mVal_spinbox = Spinbox(topbar_frame, state='disabled', from_=-1, to=20, width=4, textvariable=self.mVal, increment=1)
+        self.mVal_spinbox = Spinbox(topbar_frame, state='disabled', from_=0, to=0, width=4, textvariable=self.mVal, increment=1)
         self.mVal_spinbox.grid(row=0, column=11)
         
         Label(topbar_frame, text='Threshold:').grid(row=0, column=12, padx=3)
@@ -243,14 +249,14 @@ class GUIApp:
         ttk.Checkbutton(topbar_frame, text='Reverse Complmentary', variable=self.revComplVal).grid(row=0, column=14, padx=5)
         ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=15, sticky="ns", padx=5)
         
-        self.run_button = ttk.Button(topbar_frame, text='Run',  command=self.on_run_button_clicked)
+        self.run_button = ttk.Button(topbar_frame, text='Run', state='disabled', command=self.on_run_button_clicked)
         self.run_button.grid(row=0, column=18, padx=5)
     
     def create_left_bar(self):
-        Label(self.root, text='Input:').grid(row=11,column=1, sticky='w')
+        Label(self.root, text='Input:').grid(row=11,column=0, sticky='w')
         
         file_frame = Frame(self.root)
-        file_frame.grid(row=12, column=1, columnspan=4, rowspan = 10, sticky='wse')
+        file_frame.grid(row=12, column=0, columnspan=4, rowspan = 10, sticky='wse')
         
         self.file_box = Listbox(file_frame, activestyle='none', cursor='hand2', selectmode=EXTENDED)
         self.file_box.pack(side=LEFT, fill=BOTH, expand=1)
@@ -264,10 +270,10 @@ class GUIApp:
         self.context_menu = Menu(self.file_box, tearoff=0)
         self.context_menu.add_command( label="Delete", command=self.on_remove_selected_context_menu_clicked)
         
-        Label(self.root, text='Console:').grid(row=22, column=1, sticky='w')
+        Label(self.root, text='Console:').grid(row=22, column=0, sticky='w')
         
         console_frame = Frame(self.root)
-        console_frame.grid(row=23, column=1, columnspan=4, rowspan = 10, sticky='wse')
+        console_frame.grid(row=23, column=0, columnspan=4, rowspan = 10, sticky='wse')
         
         self.console_box = Text(console_frame, state=DISABLED, width=40)
         self.console_box.pack(side=LEFT, fill=BOTH, expand=1)
@@ -289,13 +295,14 @@ class GUIApp:
         self.tab1 = ttk.Frame(tabControl) 
         tabControl.add(self.tab1, text='Network')
         
-        tabControl.grid(row=14, column=6, columnspan=15, rowspan = 10, padx=2, sticky='nw')
-        
-        
-
+        tabControl.grid(row=14, column=5, columnspan=15, rowspan = 10, padx=2, sticky='nw')
         
     def show_context_menu(self, event):
         self.context_menu.tk_popup(event.x_root, event.y_root)
+    
+    def on_load_button_clicked(self):
+        vizURL = tkFileDialog.askopenfilename(filetypes=[('All supported', '.phylip'), ('.phylip files', '.phylip')])
+        self.callViz(vizURL)
     
     def on_addFile_button_clicked(self):
         input_file = tkFileDialog.askopenfilename(filetypes=[('All supported', '.fasta .fa .fna'), ('.fasta files', '.fasta'), ('.fa files', '.fa'), ('.fna files', '.fna')])
@@ -304,7 +311,9 @@ class GUIApp:
                 input_file_path, input_file_name = os.path.split(input_file)
                 self.label_list.append(input_file_name)
                 self.input_list.append(input_file)
-                self.file_box.insert(END, input_file_name)
+                self.file_box.insert(END, input_file_name)    
+        if len(self.input_list) > 1:
+            self.run_button.config(state='normal')
             
     def on_remove_button_clicked(self):
         try:
@@ -315,6 +324,8 @@ class GUIApp:
                 del self.label_list[index]
         except IndexError:
             pass
+        if len(self.input_list) <= 1:
+            self.run_button.config(state='disabled')
     
     def on_remove_selected_context_menu_clicked(self):
         self.on_remove_button_clicked()
@@ -334,16 +345,16 @@ class GUIApp:
                 self.label_list.append(input_file_name)
                 self.input_list.append(input_file)
                 self.file_box.insert(END, input_file_name)   
-    
+        if len(self.input_list) > 1:
+            self.run_button.config(state='normal')
+                
     def on_clear_button_clicked(self):
         del self.input_list[:]
         self.input_list = []
         del self.label_list[:]
         self.label_list = []
         self.file_box.delete(0, END)
-    
-#    def on_save_button_clicked(self):
-#        pass
+        self.run_button.config(state='disabled')
     
     def on_setting_button_clicked(self):
         PreferencesWindow(self.root)
@@ -369,10 +380,112 @@ class GUIApp:
                     self.run_button.config(state='normal')
 
             self.console_box.config(state='disabled')
-            time.sleep(1)
+            time.sleep(5)
     
-    def callViz(self):
-        vizURL = "result."+self.distVal.get()+".phylip"
+    def _phyloLabel_callback(self,clade):
+        if clade.name.startswith('Inner'): return None
+        return clade
+    
+    def _bound_to_mousewheel(self, event):
+        if event.widget == self.canvas_tab4_container:
+            self.canvas_tab4.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab4)
+            self.canvas_tab4.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+        elif event.widget == self.canvas_tab3_container:
+            self.canvas_tab3.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab3)
+            self.canvas_tab3.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+        elif event.widget == self.canvas_tab2_container:
+            self.canvas_tab2.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab2)
+            self.canvas_tab2.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+        elif event.widget == self.canvas_tab1_container:
+            self.canvas_tab1.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab1)
+            self.canvas_tab1.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+        else:
+            pass 
+
+    def _unbound_to_mousewheel(self, event):
+        if event.widget == self.canvas_tab4_container:
+            self.canvas_tab4.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab4.get_tk_widget().unbind_all("<Button-3>")
+        elif event.widget == self.canvas_tab3_container:
+            self.canvas_tab3.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab3.get_tk_widget().unbind_all("<Button-3>")
+        elif event.widget == self.canvas_tab2_container:
+            self.canvas_tab2.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab2.get_tk_widget().unbind_all("<Button-3>")
+        elif event.widget == self.canvas_tab1_container:
+            self.canvas_tab1.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab1.get_tk_widget().unbind_all("<Button-3>")
+        else:
+            pass 
+    
+    def show_context_menu_tab(self, event):
+        if event.widget == self.canvas_tab4.get_tk_widget():
+            self.context_menu_tab4.tk_popup(event.x_root, event.y_root)
+        elif event.widget == self.canvas_tab3.get_tk_widget():
+            self.context_menu_tab3.tk_popup(event.x_root, event.y_root)
+        elif event.widget == self.canvas_tab2.get_tk_widget():
+            self.context_menu_tab2.tk_popup(event.x_root, event.y_root)
+        elif event.widget == self.canvas_tab1.get_tk_widget():
+            self.context_menu_tab1.tk_popup(event.x_root, event.y_root)
+        else:
+            pass 
+        
+    def on_save_context_menu_clicked(self, tabID):
+        filename = tkFileDialog.asksaveasfilename(filetypes=[('All supported', '.jpg .png'), ('.jpg files', '.jpg'), ('.png files', '.png')])
+        
+        if tabID == 4:
+            self.fig_tab4.savefig(filename, bbox_inches='tight')
+        elif tabID == 3:
+            self.fig_tab3.savefig(filename, bbox_inches='tight')
+        elif tabID == 2:
+            self.fig_tab2.savefig(filename, bbox_inches='tight')
+        elif tabID == 1:
+            self.fig_tab1.savefig(filename, bbox_inches='tight')
+        else:
+            pass 
+      
+    def _plot_on_mousewheel_tab4(self,event):
+        factor = 1
+        if event.delta/120 > 0:
+            factor = factor * 1.1;
+        else:
+            factor = factor / 1.1
+        self.dealWithMouseWheel(factor, self.fig_tab4, self.canvas_tab4.get_tk_widget(), self.canvas_tab4_container, self.cwid_tab4)
+
+    def _plot_on_mousewheel_tab3(self,event):
+        factor = 1
+        if event.delta/120 > 0:
+            factor = factor * 1.1;
+        else:
+            factor = factor / 1.1
+        self.dealWithMouseWheel(factor, self.fig_tab3, self.canvas_tab3.get_tk_widget(), self.canvas_tab3_container, self.cwid_tab3)
+        
+    def _plot_on_mousewheel_tab2(self,event):
+        factor = 1
+        if event.delta/120 > 0:
+            factor = factor * 1.1;
+        else:
+            factor = factor / 1.1
+        self.dealWithMouseWheel(factor, self.fig_tab2, self.canvas_tab2.get_tk_widget(), self.canvas_tab2_container, self.cwid_tab2)
+        
+    def _plot_on_mousewheel_tab1(self,event):
+        factor = 1
+        if event.delta/120 > 0:
+            factor = factor * 1.1;
+        else:
+            factor = factor / 1.1
+        self.dealWithMouseWheel(factor, self.fig_tab1, self.canvas_tab1.get_tk_widget(), self.canvas_tab1_container, self.cwid_tab1)
+    
+    def dealWithMouseWheel(self, factor, figure, canvas, canvasContainer, window):
+        oldSize = figure.get_size_inches()
+        figure.set_size_inches([factor * s for s in oldSize])
+        wi,hi = [i*figure.dpi for i in figure.get_size_inches()]
+        canvas.config(width=wi, height=hi)
+        canvasContainer.itemconfigure(window, width=wi, height=hi)
+        canvasContainer.config(scrollregion=canvasContainer.bbox(Tkconstants.ALL),width=640,height=480)
+        figure.canvas.draw()
+    
+    def callViz(self, vizURL):
         print("vizURL: "+vizURL)
         if not os.path.isfile(vizURL):
             tkMessageBox.showerror(APP_NAME,vizURL + "  Not Exist!!")
@@ -389,18 +502,29 @@ class GUIApp:
         
         #phylogenetic tree
         canvas_frame_tab4 = Frame(self.tab4)
-        canvas_frame_tab4.grid(row=0, column=0, columnspan=12, rowspan = 8, sticky='nw')
-        canvas_tab4 = Canvas(canvas_frame_tab4, background="white", width=500, height=500)
+        canvas_frame_tab4.grid(row=1, column=1, sticky=Tkconstants.NS)
+        canvas_frame_tab4.rowconfigure(1, weight=1)
+        canvas_frame_tab4.columnconfigure(1, weight=1)
         
-        x_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient="horizontal")
-        x_scroll_tab4.pack(side="bottom", fill="x")
-        x_scroll_tab4.config(command=canvas_tab4.xview)
-        y_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient="vertical")
-        y_scroll_tab4.pack(side="right", fill="y")
-        y_scroll_tab4.config(command=canvas_tab4.yview)
+        self.fig_tab4, ax_tab4 = plt.subplots()
+        ax_tab4.autoscale(enable=True)
         
-        fig_tab4, ax_tab4 = plt.subplots()
-        #tree = Phylo.read(StringIO('(A,(B,C),(D,E));'), 'newick')
+        self.canvas_tab4_container = Canvas(canvas_frame_tab4)
+        self.canvas_tab4_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        x_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient=HORIZONTAL)
+        y_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient=VERTICAL)
+        x_scroll_tab4.grid(row=2, column=1, sticky=Tkconstants.EW)
+        y_scroll_tab4.grid(row=1,column=2, sticky=Tkconstants.NS)
+        self.canvas_tab4_container.config(xscrollcommand=x_scroll_tab4.set)
+        x_scroll_tab4.config(command=self.canvas_tab4_container.xview)
+        self.canvas_tab4_container.config(yscrollcommand=y_scroll_tab4.set)
+        y_scroll_tab4.config(command=self.canvas_tab4_container.yview)
+        
+        self.context_menu_tab4 = Menu(self.canvas_tab4_container, tearoff=0)
+        self.context_menu_tab4.add_command( label="Save to Image", command=lambda:self.on_save_context_menu_clicked(4))
+        
+        self.canvas_tab4_container.bind('<Enter>', self._bound_to_mousewheel)
+        self.canvas_tab4_container.bind('<Leave>', self._unbound_to_mousewheel)
         
         firstCol = np.loadtxt(vizURL,usecols=range(1),dtype='str')
         genomeSize = int(firstCol[0])
@@ -422,26 +546,115 @@ class GUIApp:
         constructor = DistanceTreeConstructor()
         tree = constructor.nj(dm)
         
-        tree.ladderize()
-        Phylo.draw(tree,do_show=False,axes=ax_tab4)
+        Phylo.draw(tree,label_func=self._phyloLabel_callback, do_show=False, axes=ax_tab4)
         
-        canvas_tab4 = FigureCanvasTkAgg(fig_tab4, master=canvas_frame_tab4)
-        canvas_tab4.get_tk_widget().config(xscrollcommand=x_scroll_tab4.set, yscrollcommand=y_scroll_tab4.set)
-        canvas_tab4.get_tk_widget().pack(side=RIGHT, fill=BOTH, expand=YES)
+        self.canvas_tab4 = FigureCanvasTkAgg(self.fig_tab4, master=self.canvas_tab4_container)
+        self.cwid_tab4 = self.canvas_tab4_container.create_window(0, 0, window=self.canvas_tab4.get_tk_widget(), anchor=Tkconstants.NW)
+        self.canvas_tab4_container.config(scrollregion=self.canvas_tab4_container.bbox(Tkconstants.ALL),width=640,height=480)
+
+        #PCOA
+        canvas_frame_tab3 = Frame(self.tab3)
+        canvas_frame_tab3.grid(row=1, column=1, sticky=Tkconstants.NS)
+        canvas_frame_tab3.rowconfigure(1, weight=1)
+        canvas_frame_tab3.columnconfigure(1, weight=1)
+         
+        self.fig_tab3, ax_tab3 = plt.subplots()
+        ax_tab3.autoscale(enable=True)
+         
+        self.canvas_tab3_container = Canvas(canvas_frame_tab3)
+        self.canvas_tab3_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        x_scroll_tab3 = Scrollbar(canvas_frame_tab3, orient=HORIZONTAL)
+        y_scroll_tab3 = Scrollbar(canvas_frame_tab3, orient=VERTICAL)
+        x_scroll_tab3.grid(row=2, column=1, sticky=Tkconstants.EW)
+        y_scroll_tab3.grid(row=1,column=2, sticky=Tkconstants.NS)
+        self.canvas_tab3_container.config(xscrollcommand=x_scroll_tab3.set)
+        x_scroll_tab3.config(command=self.canvas_tab3_container.xview)
+        self.canvas_tab3_container.config(yscrollcommand=y_scroll_tab3.set)
+        y_scroll_tab3.config(command=self.canvas_tab3_container.yview)
         
+        self.context_menu_tab3 = Menu(self.canvas_tab3_container, tearoff=0)
+        self.context_menu_tab3.add_command( label="Save to Image", command=lambda:self.on_save_context_menu_clicked(3))
+        
+        self.canvas_tab3_container.bind('<Enter>', self._bound_to_mousewheel)
+        self.canvas_tab3_container.bind('<Leave>', self._unbound_to_mousewheel)
+        
+        mds = MDS(n_components=2, dissimilarity='precomputed')
+        mdsDim = mds.fit_transform(genomeDist)
+        ax_tab3.scatter(mdsDim[:,0], mdsDim[:,1], s = 50., color='blue')
+        for i, txt in enumerate(genomeList):
+            ax_tab3.annotate(txt, (mdsDim[i,0], mdsDim[i,1]),fontsize=8)
+        plt.grid(True)
+        
+        self.canvas_tab3 = FigureCanvasTkAgg(self.fig_tab3, master=self.canvas_tab3_container)
+        self.cwid_tab3 = self.canvas_tab3_container.create_window(0, 0, window=self.canvas_tab3.get_tk_widget(), anchor=Tkconstants.NW)
+        self.canvas_tab3_container.config(scrollregion=self.canvas_tab3_container.bbox(Tkconstants.ALL),width=640,height=480)
+
+        #heatmap
+        canvas_frame_tab2 = Frame(self.tab2)
+        canvas_frame_tab2.grid(row=1, column=1, sticky=Tkconstants.NS)
+        canvas_frame_tab2.rowconfigure(1, weight=1)
+        canvas_frame_tab2.columnconfigure(1, weight=1)
+         
+        self.fig_tab2, ax_tab2 = plt.subplots()
+        ax_tab2.autoscale(enable=True)
+         
+        self.canvas_tab2_container = Canvas(canvas_frame_tab2)
+        self.canvas_tab2_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        x_scroll_tab2 = Scrollbar(canvas_frame_tab2, orient=HORIZONTAL)
+        y_scroll_tab2 = Scrollbar(canvas_frame_tab2, orient=VERTICAL)
+        x_scroll_tab2.grid(row=2, column=1, sticky=Tkconstants.EW)
+        y_scroll_tab2.grid(row=1,column=2, sticky=Tkconstants.NS)
+        self.canvas_tab2_container.config(xscrollcommand=x_scroll_tab2.set)
+        x_scroll_tab2.config(command=self.canvas_tab2_container.xview)
+        self.canvas_tab2_container.config(yscrollcommand=y_scroll_tab2.set)
+        y_scroll_tab2.config(command=self.canvas_tab2_container.yview)
+        
+        self.context_menu_tab2 = Menu(self.canvas_tab2_container, tearoff=0)
+        self.context_menu_tab2.add_command( label="Save to Image", command=lambda:self.on_save_context_menu_clicked(2))
+        
+        self.canvas_tab2_container.bind('<Enter>', self._bound_to_mousewheel)
+        self.canvas_tab2_container.bind('<Leave>', self._unbound_to_mousewheel)
+        
+        im = ax_tab2.pcolor(genomeDist_normed, cmap=genome_cmap, vmin=genome_min, vmax=genome_max, edgecolors='white')
+        cbar = self.fig_tab2.colorbar(im)
+        ax_tab2.set_frame_on(False)
+        ax_tab2.set_aspect('equal')
+        ax_tab2.invert_yaxis()
+        ax_tab2.set_xticks(np.arange(genomeDist_normed.shape[1]) + 0.5, minor=False)
+        ax_tab2.set_xticklabels(genomeList,rotation=60,fontsize=8)
+        ax_tab2.set_yticks(np.arange(genomeDist_normed.shape[1]) + 0.5, minor=False)
+        ax_tab2.set_yticklabels(genomeList)
+        
+        self.canvas_tab2 = FigureCanvasTkAgg(self.fig_tab2, master=self.canvas_tab2_container)
+        self.cwid_tab2 = self.canvas_tab2_container.create_window(0, 0, window=self.canvas_tab2.get_tk_widget(), anchor=Tkconstants.NW)
+        self.canvas_tab2_container.config(scrollregion=self.canvas_tab2_container.bbox(Tkconstants.ALL),width=640,height=480)
+    
         #network
         canvas_frame_tab1 = Frame(self.tab1)
-        canvas_frame_tab1.grid(row=0, column=0, columnspan=12, rowspan = 8, sticky='nw')
-        canvas_tab1 = Canvas(canvas_frame_tab1, background="white", width=500, height=500)
+        canvas_frame_tab1.grid(row=1, column=1, sticky=Tkconstants.NS)
+        canvas_frame_tab1.rowconfigure(1, weight=1)
+        canvas_frame_tab1.columnconfigure(1, weight=1)
+         
+        self.fig_tab1, ax_tab1 = plt.subplots()
+        ax_tab1.autoscale(enable=True)
+         
+        self.canvas_tab1_container = Canvas(canvas_frame_tab1)
+        self.canvas_tab1_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        x_scroll_tab1 = Scrollbar(canvas_frame_tab1, orient=HORIZONTAL)
+        y_scroll_tab1 = Scrollbar(canvas_frame_tab1, orient=VERTICAL)
+        x_scroll_tab1.grid(row=2, column=1, sticky=Tkconstants.EW)
+        y_scroll_tab1.grid(row=1,column=2, sticky=Tkconstants.NS)
+        self.canvas_tab1_container.config(xscrollcommand=x_scroll_tab1.set)
+        x_scroll_tab1.config(command=self.canvas_tab1_container.xview)
+        self.canvas_tab1_container.config(yscrollcommand=y_scroll_tab1.set)
+        y_scroll_tab1.config(command=self.canvas_tab1_container.yview)
         
-        x_scroll_tab1 = Scrollbar(canvas_frame_tab1, orient="horizontal")
-        x_scroll_tab1.pack(side="bottom", fill="x")
-        x_scroll_tab1.config(command=canvas_tab1.xview)
-        y_scroll_tab1 = Scrollbar(canvas_frame_tab1, orient="vertical")
-        y_scroll_tab1.pack(side="right", fill="y")
-        y_scroll_tab1.config(command=canvas_tab1.yview)
+        self.context_menu_tab1 = Menu(self.canvas_tab1_container, tearoff=0)
+        self.context_menu_tab1.add_command( label="Save to Image", command=lambda:self.on_save_context_menu_clicked(1))
         
-        fig_tab1, ax_tab1 = plt.subplots()
+        self.canvas_tab1_container.bind('<Enter>', self._bound_to_mousewheel)
+        self.canvas_tab1_container.bind('<Leave>', self._unbound_to_mousewheel)
+        
         edgeVal = []
         for fr in range(1,genomeSize):
             for to in range(fr+1,genomeSize):
@@ -452,7 +665,7 @@ class GUIApp:
         if idx >= len(edgeVal)-1:
             idx = len(edgeVal)-1
         thres = edgeVal[ idx ]
-        
+         
         G = nx.Graph()
         for row in range(genomeSize):
             G.add_node(row)
@@ -460,72 +673,22 @@ class GUIApp:
             for to in range(fr+1,genomeSize):
                 if genomeDist[fr][to] <= thres:
                     G.add_edge(fr, to, weight=genomeDist[fr][to])      
-                              
+                               
         labelsNet = {}
         for node in G.nodes():
             labelsNet[node] = genomeList[node]        
-        
+         
         pos = nx.spring_layout(G)
-        nx.draw_networkx_nodes(G, pos) 
+        nx.draw_networkx_nodes(G, pos, node_color='b') 
         nx.draw_networkx_labels(G, pos,labelsNet, font_size=8)
         nx.draw_networkx_edges(G, pos, alpha=0.4)
         plt.axis('off')
         
-        canvas_tab1 = FigureCanvasTkAgg(fig_tab1, master=canvas_frame_tab1)
-        canvas_tab1.get_tk_widget().config(xscrollcommand=x_scroll_tab1.set, yscrollcommand=y_scroll_tab1.set)
-        canvas_tab1.get_tk_widget().pack(side=RIGHT, fill=BOTH, expand=YES)
-        
-        #heatmap
-        canvas_frame_tab2 = Frame(self.tab2)
-        canvas_frame_tab2.grid(row=0, column=0, columnspan=12, rowspan = 8, sticky='nw')
-        canvas_tab2 = Canvas(canvas_frame_tab2, background="white", width=500, height=500)
-        
-        x_scroll_tab2 = Scrollbar(canvas_frame_tab2, orient="horizontal")
-        x_scroll_tab2.pack(side="bottom", fill="x")
-        x_scroll_tab2.config(command=canvas_tab2.xview)
-        y_scroll_tab2 = Scrollbar(canvas_frame_tab2, orient="vertical")
-        y_scroll_tab2.pack(side="right", fill="y")
-        y_scroll_tab2.config(command=canvas_tab2.yview)
-        
-        fig_tab2, ax_tab2 = plt.subplots()
-        im = ax_tab2.pcolor(genomeDist_normed, cmap=genome_cmap, vmin=genome_min, vmax=genome_max, edgecolors='white')
-        cbar = fig_tab2.colorbar(im)
-        ax_tab2.set_frame_on(False)
-        ax_tab2.set_aspect('equal')
-        ax_tab2.invert_yaxis()
-        ax_tab2.set_xticks(np.arange(genomeDist_normed.shape[1]) + 0.5, minor=False)
-        ax_tab2.set_xticklabels(genomeList,rotation=60,fontsize=8)
-        ax_tab2.set_yticklabels([])
-        
-        canvas_tab2 = FigureCanvasTkAgg(fig_tab2, master=canvas_frame_tab2)
-        canvas_tab2.get_tk_widget().config(xscrollcommand=x_scroll_tab2.set, yscrollcommand=y_scroll_tab2.set)
-        canvas_tab2.get_tk_widget().pack(side=RIGHT, fill=BOTH, expand=YES)
-        
-        #PCOA
-        canvas_frame_tab3 = Frame(self.tab3)
-        canvas_frame_tab3.grid(row=0, column=0, columnspan=12, rowspan = 8, sticky='nw')
-        canvas_tab3 = Canvas(canvas_frame_tab3, background="white", width=500, height=500)
-        
-        x_scroll_tab3 = Scrollbar(canvas_frame_tab3, orient="horizontal")
-        x_scroll_tab3.pack(side="bottom", fill="x")
-        x_scroll_tab3.config(command=canvas_tab3.xview)
-        y_scroll_tab3 = Scrollbar(canvas_frame_tab3, orient="vertical")
-        y_scroll_tab3.pack(side="right", fill="y")
-        y_scroll_tab3.config(command=canvas_tab3.yview)
-        
-        fig_tab3, ax_tab3 = plt.subplots()
+        self.canvas_tab1 = FigureCanvasTkAgg(self.fig_tab1, master=self.canvas_tab1_container)
+        self.cwid_tab1 = self.canvas_tab1_container.create_window(0, 0, window=self.canvas_tab1.get_tk_widget(), anchor=Tkconstants.NW)
+        self.canvas_tab1_container.config(scrollregion=self.canvas_tab1_container.bbox(Tkconstants.ALL),width=640,height=480)
 
-        mds = MDS(n_components=2, dissimilarity='precomputed')
-        mdsDim = mds.fit_transform(genomeDist)
-        ax_tab3.scatter(mdsDim[:,0], mdsDim[:,1], s = 100.)
-        for i, txt in enumerate(genomeList):
-            ax_tab3.annotate(txt, (mdsDim[i,0], mdsDim[i,1]),fontsize=8)
-        plt.grid(True)
-        
-        canvas_tab3 = FigureCanvasTkAgg(fig_tab3, master=canvas_frame_tab3)
-        canvas_tab3.get_tk_widget().config(xscrollcommand=x_scroll_tab3.set, yscrollcommand=y_scroll_tab3.set)
-        canvas_tab3.get_tk_widget().pack(side=RIGHT, fill=BOTH, expand=YES)
-    
+
     def callCAFE(self):
         optSys = platform.system()
         if optSys == 'Linux' :
@@ -575,7 +738,8 @@ class GUIApp:
         p = subprocess.Popen(paramArr, cwd=dirName, shell=True)
         p.communicate()
         
-        self.callViz()
+        vizURL = "result."+self.distVal.get()+".phylip"
+        self.callViz(vizURL)
     
     def on_run_button_clicked(self,event=None):
         optSys = platform.system()
@@ -603,6 +767,9 @@ class GUIApp:
         
         self.run_button.config(state='disabled')
         
+        #self.checkConsoleT.join()
+        #self.callT.join()
+        
     def exit_app(self):
         self.check_console = False
         if tkMessageBox.askokcancel("Quit", "Do you really want to quit?"):
@@ -620,25 +787,47 @@ class GUIApp:
         or self.distVal.get() == 'Hamming' or self.distVal.get() == 'Anderberg' or self.distVal.get() == 'Antidice' or self.distVal.get() == 'Dice' \
         or self.distVal.get() == 'Gower' or self.distVal.get() == 'Hamman' or self.distVal.get() == 'Jaccard' or self.distVal.get() == 'Kulczynski' \
         or self.distVal.get() == 'Matching' or self.distVal.get() == 'Ochiai' or self.distVal.get() == 'Pearson' or self.distVal.get() == 'Phi' \
-        or self.distVal.get() == 'Russel' or self.distVal.get() == 'Sneath' or self.distVal.get() == 'Tanimoto' or self.distVal.get() == 'Yule':
+        or self.distVal.get() == 'Russel' or self.distVal.get() == 'Sneath' or self.distVal.get() == 'Tanimoto' or self.distVal.get() == 'Yule' \
+        or self.distVal.get() == 'FFP' or self.distVal.get() == 'Co-phylog' :
             self.kVal_spinbox.config(state='normal')
             self.mVal_spinbox.config(state='disabled')
+            self.mVal_spinbox.config(from_=0)
+            self.mVal_spinbox.config(to=0)
+            self.mVal.set(0)
         elif self.distVal.get() == 'D2star' or self.distVal.get() == 'D2shepp':
             self.kVal_spinbox.config(state='normal')
             self.mVal_spinbox.config(state='normal')
+            max_mVal = int(self.kVal.get())-1
+            self.mVal_spinbox.config(from_=-1)
+            self.mVal_spinbox.config(to=max_mVal)
+            self.mVal.set(-1)
         elif self.distVal.get() == 'CVtree':
             self.kVal_spinbox.config(state='normal')
             self.mVal_spinbox.config(state='disabled')
+            max_mVal = int(self.kVal.get())-2
+            self.mVal_spinbox.config(to=max_mVal)
+            self.mVal_spinbox.config(from_=max_mVal)
+            self.mVal.set(max_mVal)
         elif self.distVal.get() == 'JS':
             self.kVal_spinbox.config(state='disabled')
             self.mVal_spinbox.config(state='normal')
+            self.mVal_spinbox.config(to=20)
+            self.mVal_spinbox.config(from_=1)
+            self.mVal.set(8)
         else:
             print("No suitable distance!")
     
     def on_k_changed(self,event=None):
-        max_mVal = int(self.kVal.get())-1
-        self.mVal.set(min(0, max_mVal))
-        self.mVal_spinbox.config(to=max_mVal)
+        if self.distVal.get() == 'D2star' or self.distVal.get() == 'D2shepp':
+            max_mVal = int(self.kVal.get())-1
+            self.mVal_spinbox.config(from_=-1)            
+            self.mVal_spinbox.config(to=max_mVal)
+        elif self.distVal.get() == 'CVtree':
+            max_mVal = int(self.kVal.get())-2
+            self.mVal_spinbox.config(from_=max_mVal)
+            self.mVal_spinbox.config(to=max_mVal)
+        else:
+            pass
 
 if __name__ == '__main__':
     root = Tk()
