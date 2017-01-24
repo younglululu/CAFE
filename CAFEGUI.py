@@ -10,6 +10,7 @@ import Tkconstants
 import tkFileDialog
 import tkMessageBox
 import ttk
+from ttk import *
 
 from math import ceil
 from sklearn.manifold import MDS
@@ -152,19 +153,24 @@ class GUIApp:
         self.mVal.set(0)
         self.thresVal.set(0)
         self.revComplVal.set(False)
+        self.optSys = platform.system()
+        self.currentTab = 4
         self.logURL = 'log.txt'
         self.logURL_replicate = 'log1.txt'
         
         self.input_list = []
         self.label_list = []
+        self.log_list = []
         
         self.addFile_icon = PhotoImage(file='image/addFile.gif')
         self.addDir_icon = PhotoImage(file='image/addDir.gif')
         self.remove_icon = PhotoImage(file='image/remove.gif')
         self.clear_icon = PhotoImage(file='image/clear.gif')
         self.load_icon = PhotoImage(file='image/load.gif')
-        #self.save_icon = PhotoImage(file='image/save.gif')
         self.setting_icon = PhotoImage(file='image/setting.gif')
+        self.zoomin_icon = PhotoImage(file='image/zoomin.gif')
+        self.zoomout_icon = PhotoImage(file='image/zoomout.gif')
+        self.save_icon = PhotoImage(file='image/save.gif')
         
         self.root.protocol('WM_DELETE_WINDOW', self.exit_app)
         self.create_gui()
@@ -179,50 +185,41 @@ class GUIApp:
     def create_menu(self):
         menu_bar = Menu(self.root)
         file_menu = Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label='Load', compound='left', image=self.load_icon, command=self.on_load_button_clicked)
+        file_menu.add_command(label='Setting', compound='left', image=self.setting_icon, command=self.on_setting_button_clicked)
         file_menu.add_separator()
-        file_menu.add_command(label='Add File', compound='left', image=self.addFile_icon, command=self.on_addFile_button_clicked)
-        file_menu.add_command(label='Add Dir', compound='left', image=self.addDir_icon, command=self.on_addDir_button_clicked)
-        file_menu.add_command(label='Remove Selected', compound='left', image=self.remove_icon, command=self.on_remove_button_clicked)
-        file_menu.add_command(label='Remove All', compound='left', image=self.clear_icon, command=self.on_clear_button_clicked)
-        #file_menu.add_command(label='Save', state='disabled', compound='left', image=self.save_icon, command=self.on_save_button_clicked)
+        file_menu.add_command(label="About", command=self.about_app)
+        file_menu.add_command(label="Help", command=self.help_app)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.exit_app)
         menu_bar.add_cascade(label='File', menu=file_menu)
         
-        about_menu = Menu(menu_bar, tearoff=0)
-        about_menu.add_command(label='Setting', compound='left', image=self.setting_icon, command=self.on_setting_button_clicked)
-        about_menu.add_separator()
-        about_menu.add_command(label="About", command=self.about_app)
-        about_menu.add_command(label="Help", command=self.help_app)
-        menu_bar.add_cascade(label='Help', menu=about_menu)
         self.root.config(menu=menu_bar)
     
     def create_top_bar(self):
         topbar_frame = Frame(self.root, height=25)
-        topbar_frame.grid(row=0, columnspan=20, rowspan=10, pady=5)
+        topbar_frame.grid(row=0, columnspan=20, rowspan=10, pady=5, sticky=Tkconstants.NSEW)
         
         load_button = ttk.Button(topbar_frame, image=self.load_icon, command=self.on_load_button_clicked)
         load_button.grid(row=0, column=0)
-        createToolTip(load_button, 'Load Results')
+        createToolTip(load_button, 'Load Existing Results in Phylip format')
         
         file_button = ttk.Button(topbar_frame, image=self.addFile_icon, command=self.on_addFile_button_clicked)
         file_button.grid(row=0, column=1)
-        createToolTip(file_button, 'Add File')
+        createToolTip(file_button, 'Add one genome sequence to the list')
         
         dir_button = ttk.Button(topbar_frame, image=self.addDir_icon, command=self.on_addDir_button_clicked)
         dir_button.grid(row=0, column=2)
-        createToolTip(dir_button, 'Add Dir')
+        createToolTip(dir_button, 'Add all genome sequences from directory to the list')
         
         remove_button = ttk.Button(topbar_frame, image=self.remove_icon, command=self.on_remove_button_clicked)
         remove_button.grid(row=0, column=3)
-        createToolTip(remove_button, 'Remove Selected')
+        createToolTip(remove_button, 'Remove Selected genome sequences in the list')
         
         clear_button = ttk.Button(topbar_frame, image=self.clear_icon, command=self.on_clear_button_clicked)
         clear_button.grid(row=0, column=4)
-        createToolTip(clear_button, 'Remove all')
+        createToolTip(clear_button, 'Remove all genome sequences in the list')
         
-        ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=5, sticky="ns", padx=5)
+        ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=5, sticky="ns", padx=3)
         
         Label(topbar_frame, text='Distance:').grid(row=0, column=6)
         dist_combobox = ttk.Combobox(topbar_frame, width=10, textvariable=self.distVal)
@@ -241,26 +238,44 @@ class GUIApp:
         self.mVal_spinbox = Spinbox(topbar_frame, state='disabled', from_=0, to=0, width=4, textvariable=self.mVal, increment=1)
         self.mVal_spinbox.grid(row=0, column=11)
         
-        Label(topbar_frame, text='Threshold:').grid(row=0, column=12, padx=3)
+        Label(topbar_frame, text='Cutoff:').grid(row=0, column=12, padx=3)
         self.thresVal.set(0)
         Spinbox(topbar_frame, from_=0, to=100, width=4, textvariable=self.thresVal, increment=1).grid(row=0, column=13)
         
         self.revComplVal.set(False)
-        ttk.Checkbutton(topbar_frame, text='Reverse Complmentary', variable=self.revComplVal).grid(row=0, column=14, padx=5)
-        ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=15, sticky="ns", padx=5)
+        ttk.Checkbutton(topbar_frame, text='Rev.Complement', variable=self.revComplVal).grid(row=0, column=14, padx=3)
+        ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=15, sticky="ns", padx=3)
         
         self.run_button = ttk.Button(topbar_frame, text='Run', state='disabled', command=self.on_run_button_clicked)
-        self.run_button.grid(row=0, column=18, padx=5)
+        self.run_button.grid(row=0, column=16, padx=3)
+        
+        ttk.Separator(topbar_frame, orient='vertical').grid(row=0, column=17, sticky="ns", padx=3)
+        
+        self.zoomin_button = ttk.Button(topbar_frame, image=self.zoomin_icon, state='disabled', command=lambda:self.on_zoom_clicked(1))
+        self.zoomin_button.grid(row=0, column=18)
+        createToolTip(self.zoomin_button, 'Zoom in the current figure')
+        
+        self.zoomout_button = ttk.Button(topbar_frame, image=self.zoomout_icon, state='disabled', command=lambda:self.on_zoom_clicked(-1))
+        self.zoomout_button.grid(row=0, column=19)
+        createToolTip(self.zoomout_button, 'Zoom out the current figure')
+        
+        self.save_button = ttk.Button(topbar_frame, image=self.save_icon, state='disabled', command=self.on_saveFig_clicked)
+        self.save_button.grid(row=0, column=20)
+        createToolTip(self.save_button, 'Save the current figure')
     
     def create_left_bar(self):
         Label(self.root, text='Input:').grid(row=11,column=0, sticky='w')
         
         file_frame = Frame(self.root)
-        file_frame.grid(row=12, column=0, columnspan=4, rowspan = 10, sticky='wse')
+        file_frame.grid(row=12, column=0, columnspan=4, rowspan = 10, sticky=Tkconstants.NSEW)
         
         self.file_box = Listbox(file_frame, activestyle='none', cursor='hand2', selectmode=EXTENDED)
         self.file_box.pack(side=LEFT, fill=BOTH, expand=1)
-        self.file_box.bind("<Button-3>", self.show_context_menu)
+        
+        if self.optSys == 'Darwin':
+            self.file_box.bind("<Button-2>", self.show_context_menu)
+        else:
+            self.file_box.bind("<Button-3>", self.show_context_menu)
         
         file_scroll_bar = Scrollbar(file_frame)
         file_scroll_bar.pack(side=RIGHT, fill=BOTH)
@@ -273,7 +288,7 @@ class GUIApp:
         Label(self.root, text='Console:').grid(row=22, column=0, sticky='w')
         
         console_frame = Frame(self.root)
-        console_frame.grid(row=23, column=0, columnspan=4, rowspan = 10, sticky='wse')
+        console_frame.grid(row=23, column=0, columnspan=4, rowspan = 10, sticky=Tkconstants.NSEW)
         
         self.console_box = Text(console_frame, state=DISABLED, width=40)
         self.console_box.pack(side=LEFT, fill=BOTH, expand=1)
@@ -302,6 +317,8 @@ class GUIApp:
     
     def on_load_button_clicked(self):
         vizURL = tkFileDialog.askopenfilename(filetypes=[('All supported', '.phylip'), ('.phylip files', '.phylip')])
+        if not vizURL:
+            return
         self.callViz(vizURL)
     
     def on_addFile_button_clicked(self):
@@ -363,24 +380,30 @@ class GUIApp:
         self.check_console = True
         while self.check_console:
             self.console_box.config(state='normal')
-            self.console_box.delete(1.0, 'end')
+            #self.console_box.delete(1.0, 'end')
             
             if os.path.isfile(self.logURL):
-                os.system("cp " + self.logURL + " " + self.logURL_replicate)  
+                if self.optSys == 'Windows' :
+                    os.system("copy " + self.logURL + " " + self.logURL_replicate)
+                else :
+                    os.system("cp " + self.logURL + " " + self.logURL_replicate)  
                 
                 log_lines = [line.rstrip('\n') for line in open(self.logURL_replicate)]
-                for log_line in log_lines:
-                    print(log_line)
-                    message = log_line.encode('utf-8')
+                for lineCnt in range(len(log_lines)):
+                    if lineCnt < len(self.log_list):
+                        continue
+                    message = log_lines[lineCnt].encode('utf-8')
                     self.console_box.insert('end', message.decode('utf-8') + '\n')
                     self.console_box.yview(END)
-                    
-                if log_lines[-1] == "Done":
-                    self.check_console = False
-                    self.run_button.config(state='normal')
+                    self.log_list.append(message);        
+
+                if len(log_lines) > 1:
+                    if log_lines[-1] == "Done":
+                        self.check_console = False
+                        self.run_button.config(state='normal')
 
             self.console_box.config(state='disabled')
-            time.sleep(5)
+            time.sleep(1)
     
     def _phyloLabel_callback(self,clade):
         if clade.name.startswith('Inner'): return None
@@ -388,32 +411,52 @@ class GUIApp:
     
     def _bound_to_mousewheel(self, event):
         if event.widget == self.canvas_tab4_container:
+            self.currentTab = 4
             self.canvas_tab4.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab4)
-            self.canvas_tab4.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+            if self.optSys == 'Darwin':
+                self.canvas_tab4.get_tk_widget().bind_all("<Button-2>", self.show_context_menu_tab)
+            else:
+                self.canvas_tab4.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
         elif event.widget == self.canvas_tab3_container:
+            self.currentTab = 3
             self.canvas_tab3.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab3)
-            self.canvas_tab3.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+            if self.optSys == 'Darwin':
+                self.canvas_tab3.get_tk_widget().bind_all("<Button-2>", self.show_context_menu_tab)
+            else:
+                self.canvas_tab3.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
         elif event.widget == self.canvas_tab2_container:
+            self.currentTab = 2
             self.canvas_tab2.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab2)
-            self.canvas_tab2.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+            if self.optSys == 'Darwin':
+                self.canvas_tab2.get_tk_widget().bind_all("<Button-2>", self.show_context_menu_tab)
+            else:
+                self.canvas_tab2.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
         elif event.widget == self.canvas_tab1_container:
+            self.currentTab = 1
             self.canvas_tab1.get_tk_widget().bind_all("<MouseWheel>", self._plot_on_mousewheel_tab1)
-            self.canvas_tab1.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
+            if self.optSys == 'Darwin':
+                self.canvas_tab1.get_tk_widget().bind_all("<Button-2>", self.show_context_menu_tab)
+            else:
+                self.canvas_tab1.get_tk_widget().bind_all("<Button-3>", self.show_context_menu_tab)
         else:
             pass 
 
     def _unbound_to_mousewheel(self, event):
         if event.widget == self.canvas_tab4_container:
-            self.canvas_tab4.get_tk_widget().unbind_all("<MouseWheel>")
+            #self.canvas_tab4.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab4.get_tk_widget().unbind_all("<Button-2>")
             self.canvas_tab4.get_tk_widget().unbind_all("<Button-3>")
         elif event.widget == self.canvas_tab3_container:
-            self.canvas_tab3.get_tk_widget().unbind_all("<MouseWheel>")
+            #self.canvas_tab3.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab3.get_tk_widget().unbind_all("<Button-2>")
             self.canvas_tab3.get_tk_widget().unbind_all("<Button-3>")
         elif event.widget == self.canvas_tab2_container:
-            self.canvas_tab2.get_tk_widget().unbind_all("<MouseWheel>")
+            #self.canvas_tab2.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab2.get_tk_widget().unbind_all("<Button-2>")
             self.canvas_tab2.get_tk_widget().unbind_all("<Button-3>")
         elif event.widget == self.canvas_tab1_container:
-            self.canvas_tab1.get_tk_widget().unbind_all("<MouseWheel>")
+            #self.canvas_tab1.get_tk_widget().unbind_all("<MouseWheel>")
+            self.canvas_tab1.get_tk_widget().unbind_all("<Button-2>")
             self.canvas_tab1.get_tk_widget().unbind_all("<Button-3>")
         else:
             pass 
@@ -441,6 +484,36 @@ class GUIApp:
             self.fig_tab2.savefig(filename, bbox_inches='tight')
         elif tabID == 1:
             self.fig_tab1.savefig(filename, bbox_inches='tight')
+        else:
+            pass 
+    
+    def on_saveFig_clicked(self):
+        if self.currentTab  == 4:
+            self.on_save_context_menu_clicked(4)
+        elif self.currentTab  == 3:
+            self.on_save_context_menu_clicked(3)
+        elif self.currentTab  == 2:
+            self.on_save_context_menu_clicked(2)
+        elif self.currentTab  == 1:
+            self.on_save_context_menu_clicked(1)
+        else:
+            pass 
+    
+    def on_zoom_clicked(self, delta):
+        factor = 1
+        if delta > 0:
+            factor = factor * 1.1;
+        else:
+            factor = factor / 1.1
+        
+        if self.currentTab  == 4:
+            self.dealWithMouseWheel(factor, self.fig_tab4, self.canvas_tab4.get_tk_widget(), self.canvas_tab4_container, self.cwid_tab4)
+        elif self.currentTab  == 3:
+            self.dealWithMouseWheel(factor, self.fig_tab3, self.canvas_tab3.get_tk_widget(), self.canvas_tab3_container, self.cwid_tab3)
+        elif self.currentTab  == 2:
+            self.dealWithMouseWheel(factor, self.fig_tab2, self.canvas_tab2.get_tk_widget(), self.canvas_tab2_container, self.cwid_tab2)
+        elif self.currentTab  == 1:
+            self.dealWithMouseWheel(factor, self.fig_tab1, self.canvas_tab1.get_tk_widget(), self.canvas_tab1_container, self.cwid_tab1)
         else:
             pass 
       
@@ -482,7 +555,7 @@ class GUIApp:
         wi,hi = [i*figure.dpi for i in figure.get_size_inches()]
         canvas.config(width=wi, height=hi)
         canvasContainer.itemconfigure(window, width=wi, height=hi)
-        canvasContainer.config(scrollregion=canvasContainer.bbox(Tkconstants.ALL),width=640,height=480)
+        canvasContainer.config(scrollregion=canvasContainer.bbox(Tkconstants.ALL),width=800,height=600)
         figure.canvas.draw()
     
     def callViz(self, vizURL):
@@ -550,7 +623,7 @@ class GUIApp:
         
         self.canvas_tab4 = FigureCanvasTkAgg(self.fig_tab4, master=self.canvas_tab4_container)
         self.cwid_tab4 = self.canvas_tab4_container.create_window(0, 0, window=self.canvas_tab4.get_tk_widget(), anchor=Tkconstants.NW)
-        self.canvas_tab4_container.config(scrollregion=self.canvas_tab4_container.bbox(Tkconstants.ALL),width=640,height=480)
+        self.canvas_tab4_container.config(scrollregion=self.canvas_tab4_container.bbox(Tkconstants.ALL),width=800,height=600)
 
         #PCOA
         canvas_frame_tab3 = Frame(self.tab3)
@@ -587,7 +660,7 @@ class GUIApp:
         
         self.canvas_tab3 = FigureCanvasTkAgg(self.fig_tab3, master=self.canvas_tab3_container)
         self.cwid_tab3 = self.canvas_tab3_container.create_window(0, 0, window=self.canvas_tab3.get_tk_widget(), anchor=Tkconstants.NW)
-        self.canvas_tab3_container.config(scrollregion=self.canvas_tab3_container.bbox(Tkconstants.ALL),width=640,height=480)
+        self.canvas_tab3_container.config(scrollregion=self.canvas_tab3_container.bbox(Tkconstants.ALL),width=800,height=600)
 
         #heatmap
         canvas_frame_tab2 = Frame(self.tab2)
@@ -627,7 +700,7 @@ class GUIApp:
         
         self.canvas_tab2 = FigureCanvasTkAgg(self.fig_tab2, master=self.canvas_tab2_container)
         self.cwid_tab2 = self.canvas_tab2_container.create_window(0, 0, window=self.canvas_tab2.get_tk_widget(), anchor=Tkconstants.NW)
-        self.canvas_tab2_container.config(scrollregion=self.canvas_tab2_container.bbox(Tkconstants.ALL),width=640,height=480)
+        self.canvas_tab2_container.config(scrollregion=self.canvas_tab2_container.bbox(Tkconstants.ALL),width=800,height=600)
     
         #network
         canvas_frame_tab1 = Frame(self.tab1)
@@ -686,18 +759,20 @@ class GUIApp:
         
         self.canvas_tab1 = FigureCanvasTkAgg(self.fig_tab1, master=self.canvas_tab1_container)
         self.cwid_tab1 = self.canvas_tab1_container.create_window(0, 0, window=self.canvas_tab1.get_tk_widget(), anchor=Tkconstants.NW)
-        self.canvas_tab1_container.config(scrollregion=self.canvas_tab1_container.bbox(Tkconstants.ALL),width=640,height=480)
-
+        self.canvas_tab1_container.config(scrollregion=self.canvas_tab1_container.bbox(Tkconstants.ALL),width=800,height=600)
+        
+        self.zoomin_button.config(state='normal')
+        self.zoomout_button.config(state='normal')
+        self.save_button.config(state='normal')
 
     def callCAFE(self):
-        optSys = platform.system()
-        if optSys == 'Linux' :
+        if self.optSys == 'Linux' :
             exePath = "./cafe_linux"
             os.system("chmod 777 " + exePath)
-        elif optSys == 'Darwin' :
+        elif self.optSys == 'Darwin' :
             exePath = "./cafe_mac"
             os.system("chmod 777 " + exePath)
-        elif optSys == 'Windows' :
+        elif self.optSys == 'Windows' :
             exePath = "cafe_win.exe"
             import ctypes
             SEM_NOGPFAULTERRORBOX = 0x0002 
@@ -733,29 +808,34 @@ class GUIApp:
         paramArr.append(">")
         paramArr.append(self.logURL)
         
-        #absFileName = os.path.abspath('cafe.exe')
-        dirName = os.path.dirname(os.path.abspath(__file__))
-        p = subprocess.Popen(paramArr, cwd=dirName, shell=True)
-        p.communicate()
+        if self.optSys == 'Darwin':
+            p = subprocess.Popen([" ".join(paramArr)], shell=True)
+            p.communicate()
+        else:
+            #dirName = os.path.dirname(os.path.abspath(__file__))
+            #dirName = os.getcwd()
+            #p = subprocess.Popen(paramArr, cwd=dirName, shell=True)
+            p = subprocess.Popen(paramArr, shell=True)
+            p.communicate()
         
         vizURL = "result."+self.distVal.get()+".phylip"
         self.callViz(vizURL)
     
     def on_run_button_clicked(self,event=None):
-        optSys = platform.system()
-        if optSys == 'Linux' :
-            exePath = "cafe_linux"
-        elif optSys == 'Darwin' :
-            exePath = "cafe_mac"
-        elif optSys == 'Windows' :
-            exePath = "cafe_win.exe"
-        
         if not len(self.input_list) or len(self.input_list)==1:
             tkMessageBox.showerror(APP_NAME,'Program cannot proceed when the input size <= 1')
             return
         
-        os.system("rm " + self.logURL)
-        os.system("rm " + self.logURL_replicate)  
+        if len(self.log_list) > 0:
+            self.console_box.delete(1.0, 'end')
+            self.log_list = []
+        
+        if self.optSys == 'Windows' :
+            os.system("del " + self.logURL)
+            os.system("del " + self.logURL_replicate)  
+        else:
+            os.system("rm " + self.logURL)
+            os.system("rm " + self.logURL_replicate)  
         
         self.checkConsoleT = threading.Thread(target=self.display_console)
         self.checkConsoleT.setDaemon(True)    
@@ -831,8 +911,11 @@ class GUIApp:
 
 if __name__ == '__main__':
     root = Tk()
+    root.style = Style()
+    root.style.theme_use("clam")
+    
     app = GUIApp(root)
-    root.geometry('{}x{}'.format(1000, 630))
+    root.geometry('{}x{}'.format(1280, 800))
     root.resizable(False, False)
     root.iconbitmap('image/logo.ico')
     root.mainloop()
