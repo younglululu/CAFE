@@ -3,150 +3,114 @@
 
 ===================
 
-Thank you for downloading this tool for sequence distance/dissimialrity measures using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall 27 measures including (1) Conventional measures based on k-mer counts, (2) Newly developed measures based on background adjusted k-mer counts, and (3) Measures based on presence/absence of k-mers. The detailed definitions can be found in the paper or in the later section. 
+Thank you for downloading this tool for sequence distance/dissimialrity measures using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall **29** measures including (1) Conventional measures based on k-mer counts, (2) Newly developed measures based on background adjusted k-mer counts, and (3) Measures based on presence/absence of k-mers. The detailed definitions can be found in the paper. 
 
-CAFE works with sequence data, both long genomic sequences and shotgun sequence reads from NGS technologies, and subsequently generates pairwise dissimilarities among the sequences as output. CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. All the analysis can be performed by simply clicking through well-designed graphical user interface (GUI) or invoking a stand-alone command line executable program on three common operating systems (Linux, Mac, and Windows)
+CAFE works with sequence data, both long genomic sequences and shotgun sequence reads from NGS technologies, and subsequently generates pairwise dissimilarities among the sequences as output. CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. All the analysis can be performed by simply clicking through well-designed graphical user interface (GUI) on two common operating systems ( Mac and Windows) or invoking a stand-alone command line executable program on three common operating systems (Linux, Mac, and Windows)
 
 
-----------
-
-Compatibility
-=============
-
-The stand-alone command line executable program is written in c++, which has been fully tested under gcc version 4.8.1. It works under Windows, Linux or Mac environment. Precompiled executables are provided for these platforms, and users have the option to compile the source code for their specific platform if desired (see the Installation section below). The graphical user interface (GUI) is written in Python Tkinter library, the built-in GUI library for all standard Python distributions.
-
-----------
-
-Dependencies
+One-click Installation
 ============
 
-Fundamental dependencies
+Installation on Windows
 ------------------------
+> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/57rwaqueqftykyd/CAFEGUI_win32.zip?dl=0)
+> 2. Unzip it
+> 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time.
 
-> Python v2.7.*
-> gcc
-
-These items are prerequisites for the installation of CAFE as described below. The former is essential for the graphical user interface and the later is essential for the stand-alone command line executable program.
-
-Python package
+Installation on Mac
 ------------------------
+> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/qqw6j4il05rf0pq/CAFEGUI_mac.zip?dl=0)
+> 2. Unzip it
+> 3. Use the terminal to execute "./CAFEGUI" under the folder. 
 
-> numpy
-> scipy 
-> biopython
-> scikit-learn
-> matplotlib
-> networkx
 
-These are the python packages that need to be installed in order to run the graphical user interface. If the user is only running the stand-alone command line executable program, please just ignore this step.
-
-Additional software (optional)
-------------------------
-
-The software relies on JELLYFISH (http://www.cs.cmu.edu/~ckingsf/software/jellyfish/) to count kmer efficiently. With built-in kmer counting program, CAFE can still proceed to work **WITHOUT** the installation of JELLYFISH in a slower manner.
-
-----------
-
-Installation
-============
-
-Installation of the stand-alone executable program
-------------------------
-####<i class="icon-cog"> Compile program directly using g++
-
-```sh
-$ make
-```
-
-Installation of python dependencies using Anaconda 
-------------------------
-
-Anaconda is a tool to isolate your python installation, which allows you to have multiple parallel installations using different versions of different packages, and gives you a very convenient and fast way to install the most common scientific python packages. 
-
-To install Anaconda on your computer, perform the following steps:
-
- 1. Download Anaconda for your platform from [here](https://www.continuum.io/downloads)
- 2. After the file is completely downloaded, install Anaconda:
-	- Windows users can double-click on the installer and follow the on-screen instruction
-	- Mac users can double-click the .pkg file and follow the instructions displayed on screen
-	- Linux users can run the following command:
-```sh
-$ bash <downloaded_file>
-```
-More detailed installation instructions can be found [here](https://docs.continuum.io/anaconda/install.html)
-
-After installing Anaconda, including the corresponding dependent python package varies on different systems, and described in this README is only how to proceed with a linux (ubuntu) distribution. 
-
-Create a new environment:
-```sh
-$ conda create -n cafe_env python=2.7.6
-```
-
-After choosing to proceed, run the suggested command:
-```sh
-$ source activate cafe_env 
-```
-
-Then install the concoct dependencies into this environment:
-```sh
-$ conda install numpy scipy biopython scikit-learn matplotlib networkx
-```
 
 Usage
 =====
 
-Usage of Graphical User Interface
+Guidance of Graphical User Interface
 ------------------------
 
-The main window has the layout shown in the following figure, containing five parts in terms of functionality:
+<p align="center">
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot1.jpg"/>
+</p>
+The main window has the layout shown in the following figure, containing six parts in terms of functionality:
 
- 1. The red area contains four button involving add/remove sequence data files. The sequence data files can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. The first button indicates adding one single sequence data file. The second button indicates adding all sequence data files in the specified directory. The third button indicates removing the selected sequence data files shown in the green panel below. And the fourth button indicates removing all sequence data files shown in the green panel below.
- 2. The yellow area contains the configuration might involved in various distance measures. For example, the selection of 27 distance measures, the selection of kmer length, the selection of possible markov order describing the sequence generating model, the threshold to cutoff the kmer occurrence, and whether to consider the reverse complementary of each kmer, which is a common choice in the scenario of dealing with shotgun sequence reads from NGS technologies
- 3. The green area contains  all added sequence data files as mentioned.
- 4. The blue area keeps tracking of the running information when calculating the distance measures. 
- 5. The purple area are the key to visualize the pairwise distance result. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
+ 1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
+	 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/load.gif) : Load Existing Results in Phylip format
+	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/addFile.gif)  :  Add one genome sequence to the list.
+	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/addDir.gif)  :  Add all genome sequences from directory to the list
+	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/remove.gif)  :  Remove Selected genome sequences in the list
+	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/clear.gif)  :  Remove all genome sequences in the list
+
+ 2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrence, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically.
+
+ 3. The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
+
+	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/zoomin.gif) : Zoom in the current figure
+	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/zoomout.gif) : Zoom out the current figure
+	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/save.gif) : Save the current figure
+
+
+ 4. The green area contains the list of all sequence added from the Data Selection Toolbar.
+
+ 5. The blue area keeps track of the running information when calculating the distance measures. 
+
+ 6. The purple area are the key to visualize the pairwise distance result. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
+
+
+Usage Example of Graphical User Interface
+------------------------
+
+
+Here we go through a toy example by step-by-step guidance.  You can find a folder named "example" in the unzipped folder, which contains 30 virus genomes. There are two subfolders, "data" and "hash". The folder "data" contains the corresponding genome sequence files in the fasta format. And the folder "hash" contains the corresponding binary kmer count files. 
+
+We first click the third button of the Data Selection Toolbar and select the "data" folder, selecting all the 30 virus genome sequence files into the input list.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot0.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot2.jpg"/>
 </p>
 
-
-Here we go through a test example by step-by-step guidance.  You can find a folder named "example" in the package, which contains 30 virus genomes. There are three subfolders, "data", "hash" and "visualization". The folder "data" contains the corresponding genome sequence files. The folder "hash" contains the corresponding binary kmer count files. The folder "visualization" contains the visualization-related files including web pages and associated javascript/css files.
-
-We first add the virus genome sequence files by specifying the directory.
+We next specify the directory to save the binary k-mer count files. Users can choose any folder they want or even skip this step, by default, the binary k-mer count files would be saved in the current directory. To save time, we choose the "hash" folder which stores all pre-computed binary k-mer count files. The setting panel can be found in the menu, which contains the configuration of Jellyfish executable file path, the saved hash directory and the quantile of edges to display in the network analysis.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot1.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot3.jpg"/>
 </p>
 
-We nest specify the directory of pre-computed binary kmer count files to save the time. The setting panel contains the configuration of Jellyfish executable file path, the saved hash directory and the quantile of edges to display in the network analysis.
+After that, we arrives at the last step, that is, specifying the alignment-free distance. Here we choose Manhattan distance measure, and simply click the 'Run' button, with default setting ( K=8 ). After seconds, the result is available in visualized plots. Also, we can track the progress through the console in the left panel.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot2.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot4.jpg"/>
 </p>
 
-After necessary information has been set, here we use D2star distance measures, we simply click the 'Run' button. From the following four snapshots, we can see the running information has been displayed, and the pairwise distance measures have been further processed into multiple way. Here is the dendrogram by using the neighbour-joining algorithm.
+Notice that if the result has been computed before or from somewhere else, we can simply use the Graphical User Interface to visualize the result anytime by clicking the first button of the Data Selection Toolbar! 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot3.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot5.jpg"/>
+</p>
+
+Once the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse. The buttons are in the Image Toolbar. Here is the dendrogram of the pairwise distances by using the neighbour-joining algorithm. 
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot6.jpg"/>
 </p>
 
 Here is the two dimensional projection using principal coordinate analysis (PCoA).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot4.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot7.jpg"/>
 </p>
 
 Here is the heatmap, very straightforward.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot5.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot8.jpg"/>
 </p>
 
 Here is the network analysis with respect to the 10% quantile of the edges with smallest distance as weight.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/example/visualization/gui_snapshot6.jpg"/>
+  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot9.jpg"/>
 </p>
 
 
@@ -163,18 +127,24 @@ Usage of  Stand-alone Executable Program
 				 2. Canberra: Canberra distance
 				 3. Chisq: Chi-Square distance
 				 4. Cosine: Cosine distance
-				 5. Co-phylo: Co-phylog distance
+				 5. Co-phylog: Co-phylog distance
 				 6. D2: D2 distance
 				 7. Eu: Euclidean distance
 				 8. FFP: Feature frequency profiles (FFP)
 				 9. JS: Jensen-Shannon divergence
 				 10. Ma: Manhattan distance
 				 11. Pearson: Pearson distance
+
 		 - Newly developed measures based on background adjusted kmer counts: 
+		 
+
 				 1. CVtree: CVtree distance
 				 2. D2shepp: D2shepp distance
 				 3. D2star: D2star distance
+
 		 - Measures based on presence/absence of kmers:
+		 
+
 				 1. Anderberg: Anderberg distance
 				 2. Antidice: anti-Dice distance
 				 3. Dice: Dice distance
@@ -208,14 +178,6 @@ Usage of  Stand-alone Executable Program
 	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao -R
 
 
-A test example
-==============
-
-You can find a folder named "example" in the package, which contains 30 virus genomes. There are three subfolders, "data", "hash" and "visualization". The folder "data" contains 30 genome fasta files. The folder "hash" contains the corresponding binary kmer count files. The folder "visualization" contains the visualization-related files including web pages and associated javascript/css files.
-
-
-
-----------
 
 
 Contacts and bug reports
@@ -234,7 +196,7 @@ Copyright and License Information
 =================================
 
 
-Copyright (C) 2016 University of Southern California, Yang Lu
+Copyright (C) 2017 University of Southern California, Yang Lu
 
 Authors: Yang Lu
 
@@ -250,4 +212,4 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 
-Last update: 29-Dec-2016
+Last update: 24-Jan-2017
