@@ -134,17 +134,11 @@ Usage of  Stand-alone Executable Program
 				 9. JS: Jensen-Shannon divergence
 				 10. Ma: Manhattan distance
 				 11. Pearson: Pearson distance
-
-		 - Newly developed measures based on background adjusted kmer counts: 
-		 
-
+		 - Newly developed measures based on background adjusted kmer counts: 		 
 				 1. CVtree: CVtree distance
 				 2. D2shepp: D2shepp distance
 				 3. D2star: D2star distance
-
 		 - Measures based on presence/absence of kmers:
-		 
-
 				 1. Anderberg: Anderberg distance
 				 2. Antidice: anti-Dice distance
 				 3. Dice: Dice distance
