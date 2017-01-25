@@ -122,7 +122,8 @@ Usage of  Stand-alone Executable Program
 
 > - Main arguments:
 	- **-D** < dist >  Comma-separated list of distance measurements,  **E.g.** -D D2star,Ma,CVtree. The options include: 
-		 - Conventional measures based on kmer counts :			 
+		 - Conventional measures based on kmer counts :	
+		
 				 1. Ch: Chebyshev distance
 				 2. Canberra: Canberra distance
 				 3. Chisq: Chi-Square distance
@@ -134,11 +135,15 @@ Usage of  Stand-alone Executable Program
 				 9. JS: Jensen-Shannon divergence
 				 10. Ma: Manhattan distance
 				 11. Pearson: Pearson distance
-		 - Newly developed measures based on background adjusted kmer counts: 		 
+		 
+		 - Newly developed measures based on background adjusted kmer counts: 
+		 
 				 1. CVtree: CVtree distance
 				 2. D2shepp: D2shepp distance
 				 3. D2star: D2star distance
+		
 		 - Measures based on presence/absence of kmers:
+		 
 				 1. Anderberg: Anderberg distance
 				 2. Antidice: anti-Dice distance
 				 3. Dice: Dice distance
@@ -154,6 +159,7 @@ Usage of  Stand-alone Executable Program
 				 13. Sneath: Sneath-Sokal distance
 				 14. Tanimoto: Rogers-Tanimoto distance
 				 15. Yule: Yule distance
+		
 	- **-I** < fa_files > Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
 	- **-K** < intK > Kmer Length.
 
