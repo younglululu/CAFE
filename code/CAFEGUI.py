@@ -773,6 +773,7 @@ class GUIApp:
             exePath = "./cafe_mac"
             os.system("chmod 777 " + exePath)
         elif self.optSys == 'Windows' :
+            #exePath = os.path.join(os.getcwd(),"cafe_win.exe")
             exePath = "cafe_win.exe"
             import ctypes
             SEM_NOGPFAULTERRORBOX = 0x0002 
@@ -910,6 +911,8 @@ class GUIApp:
             pass
 
 if __name__ == '__main__':
+    os.chdir(os.getcwd())
+    
     root = Tk()
     root.style = Style()
     root.style.theme_use("clam")

@@ -62,7 +62,7 @@ void print_usage_and_exit()
 	printf("\nOptions\n");
 	printf("\t-J <jfexe_path>\tUse jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish \n");
 	printf("\t-L <lower>\tOnly consider k-mer with occurrence >= <lower>. The default value is 0. \n");
-	printf("\t-M <order>\tMarkov Order involved in D2star and D2shepp. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).\n");
+	printf("\t-M <order>\tMarkov Order involved in D2star and D2shepp. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is -1 (Automaticcaly determine by BIC).\n");
 	printf("\t-R \t\tConsider Reverse Complement in kmer counting. \n");
 	printf("\t-S <dir>\tSave/Load calculated k-mer count binary files to the folder <dir>. Each input fasta file corresponds to particular model. \n");
 	printf("\t-O <path>\tOutput results to file at <path> \n");
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 	std::vector<std::string> vec_saveURLlist;
 
 	int i_k = 0, i_lowerCnt = 0;
-	OUTPUT_TYPE outputType = PLAIN;
+	OUTPUT_TYPE outputType = PHYLIP;
 	bool singleStrain = true, containChiSq = false, containCvtree = false, jellyfishValid = false;
 	std::string str_save_modelDir = "", str_save_vizDir = "", str_outputFileURL = "", str_jellyfishExeURL = "";
 	
@@ -367,8 +367,9 @@ int main(int argc, char* argv[])
 				else if (HAMMING == currDist) distVal = DistFactory::getInstance()->getHammingdist(hashK, singleStrain, src_kmerModel, trgt_kmerModel);
 				else if (JS == currDist)
 				{
-					if (vec_order.at(i) != vec_order.at(j)) throw std::runtime_error("JS expect same order! ");
-					distVal = DistFactory::getInstance()->getJensenShannondist(hashK, singleStrain, vec_order.at(i), vec_saveURLlist[i], vec_saveURLlist[j], src_kmerModel, trgt_kmerModel);
+					//if (vec_order.at(i) != vec_order.at(j)) throw std::runtime_error("JS expect same order! ");
+					int maxOrder = vec_order.at(i); if(maxOrder < vec_order.at(j)) maxOrder = vec_order.at(j);
+					distVal = DistFactory::getInstance()->getJensenShannondist(hashK, singleStrain, maxOrder, vec_saveURLlist[i], vec_saveURLlist[j], src_kmerModel, trgt_kmerModel);
 				}
 				simMat->set(i, j, distVal); simMat->set(j, i, distVal);
 				delete trgt_kmerModel;
@@ -392,60 +393,6 @@ int main(int argc, char* argv[])
 
 		}
 		OutputWriter::getInstance()->writeToConsole(outputType, simMat, &vec_namelist);
-
-		/*if (!str_outputFileURL.empty())
-		{
-			std::string postfixedOutputURL = str_outputFileURL;
-			postfixedOutputURL.append(".").append(vec_distStr[distIdx]);
-			OutputWriter::getInstance()->writeToFile(outputType, simMat, &vec_namelist, postfixedOutputURL);
-		}
-		else
-			OutputWriter::getInstance()->writeToConsole(outputType, simMat, &vec_namelist);*/
-
-		///start visualization
-		/*if (!str_save_vizDir.empty() && !dir_exists(str_save_vizDir))
-		{
-			std::string cmd = "mkdir " + str_save_vizDir; system(cmd.c_str());
-			std::string cpCssCMD = "cp -r res/css " + str_save_vizDir; system(cpCssCMD.c_str());
-			std::string cpLibCMD = "cp -r res/lib " + str_save_vizDir; system(cpLibCMD.c_str());
-			std::string cpLogoCMD = "cp -r res/logo.jpg " + str_save_vizDir; system(cpLogoCMD.c_str());
-		}
-		std::string str_saveVizTemp = str_save_vizDir;
-		if (!str_saveVizTemp.empty() && !endsWith(str_saveVizTemp, "/")) str_saveVizTemp.append("/");
-
-		std::string cpCMD1 = "cp -r res/lib " + str_saveVizTemp; system(cpCMD1.c_str());
-		std::string cpCMD2 = "cp -r res/css " + str_saveVizTemp; system(cpCMD2.c_str());
-		std::string cpCMD3 = "cp res/logo.jpg " + str_saveVizTemp; system(cpCMD3.c_str());
-
-
-		str_saveVizTemp.append(vec_distStr[distIdx]).append("_k_").append(patch::to_string(i_k)).append("_main.html_part2");
-		std::ofstream html2Out(str_saveVizTemp.c_str());
-
-		std::string str_outputVizURL = str_save_vizDir;
-		if (!str_outputVizURL.empty() && !endsWith(str_outputVizURL, "/")) str_outputVizURL.append("/");
-		str_outputVizURL.append(vec_distStr[distIdx]).append("_k_").append(patch::to_string(i_k)).append("_main.html");
-		
-		html2Out << "var genomeNameArr = ["; html2Out << "\"" << vec_namelist.at(0) << "\"";
-		for (int col = 1; col < vec_namelist.size(); ++col) html2Out << ",\"" << vec_namelist.at(col) << "\"";
-		html2Out << "];" << std::endl;
-	
-		html2Out << "var genomeMat = [";
-		for (int row = 0; row < vec_namelist.size(); ++row)
-		{
-			html2Out << "[" << simMat->get(row, 0);
-			for (int col = 1; col < vec_namelist.size(); ++col) html2Out << "," << simMat->get(row, col);
-			html2Out << "]";
-
-			if (row != vec_namelist.size() - 1) html2Out << "," << std::endl;
-		}
-		html2Out << "];" << std::endl;
-		html2Out.flush(); html2Out.close();
-
-		std::string catCMD = "cat res/main.html_part1 " + str_saveVizTemp + " res/main.html_part3 > " + str_outputVizURL;
-		system(catCMD.c_str());
-		//std::string rmCMD = "rm " + str_saveVizTemp;
-		//system(rmCMD.c_str()); */
-		///end visualization
 		
 		endTime = clock();
 		std::cout << "Time Elapsed: " << ((float)endTime - (float)startTime) / CLOCKS_PER_SEC << " seconds" << std::endl;

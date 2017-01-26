@@ -806,8 +806,9 @@ int getEstMarkovOrder(int i_arg_k, std::string str_arg_saveURLPrefix, std::strin
 	delete kmerModel;
 	kmerModel = new KmerModel(i_arg_k, true);
 
+	int maxOrder = i_arg_k; if(maxOrder > MAX_ORDER) maxOrder = MAX_ORDER;
 	std::vector<double> result_traceVec;
-	for (int currOrder = 0; currOrder < i_arg_k; ++currOrder)
+	for (int currOrder = 0; currOrder < maxOrder; ++currOrder)
 	{
 		double BIC = (BASE - 1) * pow(BASE, currOrder) * log(l_totalKmer + i_arg_k - currOrder);
 

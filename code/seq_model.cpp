@@ -82,13 +82,6 @@ void MarkovModel::print()
 		std::cout << arr_obvTransProb[newIdx][0] << " " << arr_obvTransProb[newIdx][1] << " " << arr_obvTransProb[newIdx][2] << " " << arr_obvTransProb[newIdx][3] << std::endl;
 	}
 
-	/*for (std::unordered_map<unsigned long long, unsigned long long>::iterator iter = kmerIdxRowIdxTable->begin(); iter != kmerIdxRowIdxTable->end(); iter++)
-	{
-		unsigned long long currKmerIdx = iter->first;
-		unsigned long long newIdx = (*kmerIdxRowIdxTable)[currKmerIdx];
-		std::cout << currKmerIdx << "\t" << vec_obvMargProb[newIdx] << "\t";
-		std::cout << arr_obvTransProb[newIdx][0] << " " << arr_obvTransProb[newIdx][1] << " " << arr_obvTransProb[newIdx][2] << " " << arr_obvTransProb[newIdx][3] << std::endl;
-	}*/
 }
 
 void MarkovModel::addMargProb(unsigned long long l_arg_currKmerIdx, double d_value)

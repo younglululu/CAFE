@@ -32,6 +32,7 @@
 
 
 #define BASE 4
+#define MAX_ORDER 10
 #define LOG2 log(2)
 
 // if the char char_arg_nt violates ACGTOnly condition, return -1; Otherwise, 
