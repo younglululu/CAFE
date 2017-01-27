@@ -39,9 +39,13 @@ The graphical user interface has the layout shown in the above figure, containin
 1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) : Load Existing Results in Phylip format.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addFile.gif)  :  Add one genome sequence to the list.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addDir.gif)  :  Add all genome sequences from directory to the list.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/remove.gif)  :  Remove Selected genome sequences in the list.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
 
  2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
@@ -49,7 +53,9 @@ The graphical user interface has the layout shown in the above figure, containin
  3. The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) : Zoom in the current figure.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) : Zoom out the current figure.
+
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) : Save the current figure.
 
 
@@ -121,41 +127,68 @@ Usage of  Stand-alone Executable Program
 > - Main arguments:
 	- **-D** < dist >  Comma-separated list of distance measurements,  **E.g.** -D D2star,Ma,CVtree. The options include: 
 			 - Conventional measures based on kmer counts :			 
-1. Ch: Chebyshev distance
-2. Canberra: Canberra distance
-3. Chisq: Chi-Square distance
-4. Cosine: Cosine distance
-5. Co-phylog: Co-phylog distance
-6. D2: D2 distance
-7. Eu: Euclidean distance
-8. FFP: Feature frequency profiles (FFP)
-9. JS: Jensen-Shannon divergence
-10. Ma: Manhattan distance
-11. Pearson: Pearson distance
+				1. Ch: Chebyshev distance
+				
+				2. Canberra: Canberra distance
+				
+				3. Chisq: Chi-Square distance
+				
+				4. Cosine: Cosine distance
+				
+				5. Co-phylog: Co-phylog distance
+				
+				6. D2: D2 distance
+				
+				7. Eu: Euclidean distance
+				
+				8. FFP: Feature frequency profiles (FFP)
+				
+				9. JS: Jensen-Shannon divergence
+				
+				10. Ma: Manhattan distance
+				
+				11. Pearson: Pearson distance
 				
 			 - Newly developed measures based on background adjusted kmer counts: 
 			 
-1. CVtree: CVtree distance
-2. D2shepp: D2shepp distance
-3. D2star: D2star distance
+				1. CVtree: CVtree distance
+				
+				2. D2shepp: D2shepp distance
+				
+				3. D2star: D2star distance
 				
 			 - Measures based on presence/absence of kmers:
 
-1. Anderberg: Anderberg distance
-2. Antidice: anti-Dice distance
-3. Dice: Dice distance
-4. Gower: Gower distance
-5. Hamman: Hamman distance
-6. Hamming: Hamming distance
-7. Jaccard: Jaccard distance
-8. Kulczynski: Kulczynski distance
-9. Matching: Matching distance
-10. Ochiai: Ochiai distance
-11. Phi: Pearson Phi distance
-12. Russel: Russel-Rao distance
-13. Sneath: Sneath-Sokal distance
-14. Tanimoto: Rogers-Tanimoto distance
-15. Yule: Yule distance
+				1. Anderberg: Anderberg distance
+				
+				2. Antidice: anti-Dice distance
+				
+				3. Dice: Dice distance
+				
+				4. Gower: Gower distance
+				
+				5. Hamman: Hamman distance
+				
+				6. Hamming: Hamming distance
+				
+				7. Jaccard: Jaccard distance
+				
+				8. Kulczynski: Kulczynski distance
+				
+				9. Matching: Matching distance
+				
+				10. Ochiai: Ochiai distance
+				
+				11. Phi: Pearson Phi distance
+				
+				12. Russel: Russel-Rao distance
+				
+				13. Sneath: Sneath-Sokal distance
+				
+				14. Tanimoto: Rogers-Tanimoto distance
+				
+				15. Yule: Yule distance
+				
 		- **-I** < fa_files > Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
 		- **-K** < intK > Kmer Length.
 
