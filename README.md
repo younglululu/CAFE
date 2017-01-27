@@ -125,6 +125,7 @@ Usage of  Stand-alone Executable Program
 > **Command:  ** ./cafe [options]* -D  < dist > -I < fa_files > -K  < intK >
 
 > - Main arguments:
+
 	- **-D** < dist >  Comma-separated list of distance measurements,  **E.g.** -D D2star,Ma,CVtree. The options include: 
 	
 		Conventional measures based on kmer counts :		
@@ -196,6 +197,7 @@ Usage of  Stand-alone Executable Program
 	- **-K** < intK > Kmer Length.
 
 > - Options:
+
 	- **-J** < jfexe_path > Use jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish
 	
 	- **-L** < lower > Only consider k-mer with occurrence >= <lower>. The default value is 1.
@@ -211,6 +213,7 @@ Usage of  Stand-alone Executable Program
 	- **-T** < type > The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
 
 > - Examples:
+
 	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma
 	
 	- ./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma
