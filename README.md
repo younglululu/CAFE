@@ -208,9 +208,9 @@ Usage of  Stand-alone Executable Program
 	
 	-S < dir >: Save/Load calculated k-mer count binary files to the folder < dir >. Each input fasta file corresponds to particular model.
 	
-	-O: < path > Output results to file at < path >.
+	-O < path >: Output results to file at < path >.
 	
-	-T: < type > The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
+	-T < type >: The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
 
 > - Examples:
 
