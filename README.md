@@ -3,9 +3,9 @@
 
 ===================
 
-Thank you for downloading this tool for sequence distance/dissimialrity measures using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall **29** measures including (1) Conventional measures based on k-mer counts, (2) Newly developed measures based on background adjusted k-mer counts, and (3) Measures based on presence/absence of k-mers. The detailed definitions can be found in the paper. 
+Thank you for downloading CAFE for molecular sequence analysis using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall **29** distance/dissimilarity measures including (1) conventional measures based on k-mer counts, (2) newly developed measures based on background adjusted k-mer counts, and (3) measures based on presence/absence of k-mers. The detailed definitions can be found in the paper. 
 
-CAFE works with sequence data, both long genomic sequences and shotgun sequence reads from NGS technologies, and subsequently generates pairwise dissimilarities among the sequences as output. CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. All the analysis can be performed by simply clicking through well-designed graphical user interface (GUI) on two common operating systems ( Mac and Windows) or invoking a stand-alone command line executable program on three common operating systems (Linux, Mac, and Windows)
+CAFE works with sequence data, both long genomic sequences and shotgun sequence reads from NGS technologies, and subsequently generates pairwise dissimilarities among the sequences as output. CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. All the analysis can be performed by simply clicking through well-designed graphical user interface (GUI) on two common operating systems ( Mac and Windows) or invoking a stand-alone command line executable program on three common operating systems (Linux, Mac, and Windows)
 
 
 One-click Installation
@@ -13,83 +13,81 @@ One-click Installation
 
 Installation on Windows
 ------------------------
-> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/57rwaqueqftykyd/CAFEGUI_win32.zip?dl=0)
+> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/5ck9ixs9h6r0pqr/CAFEGUI_win.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time.
 
 Installation on Mac
 ------------------------
-> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/qqw6j4il05rf0pq/CAFEGUI_mac.zip?dl=0)
+> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/slbka30b281c3xz/CAFEGUI_mac.zip?dl=0)
 > 2. Unzip it
 > 3. Use the terminal to execute "./CAFEGUI" under the folder. 
-
+> 4. Notice that simply double-click "CAFEGUI" may not work
 
 
 Usage
 =====
 
-Guidance of Graphical User Interface
+Guidance on Graphical User Interface
 ------------------------
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot1.jpg"/>
 </p>
-The main window has the layout shown in the following figure, containing six parts in terms of functionality:
+The graphical user interface has the layout shown in the above figure, containing six parts in terms of functionality:
 
- 1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
-	 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/load.gif) : Load Existing Results in Phylip format
-	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/addFile.gif)  :  Add one genome sequence to the list.
-	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/addDir.gif)  :  Add all genome sequences from directory to the list
-	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/remove.gif)  :  Remove Selected genome sequences in the list
-	  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/clear.gif)  :  Remove all genome sequences in the list
+1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
 
- 2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrence, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) : Load Existing Results in Phylip format.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addFile.gif)  :  Add one genome sequence to the list.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addDir.gif)  :  Add all genome sequences from directory to the list.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/remove.gif)  :  Remove Selected genome sequences in the list.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
+
+ 2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 
  3. The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/zoomin.gif) : Zoom in the current figure
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/zoomout.gif) : Zoom out the current figure
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/image/save.gif) : Save the current figure
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) : Zoom in the current figure.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) : Zoom out the current figure.
+![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) : Save the current figure.
 
 
  4. The green area contains the list of all sequence added from the Data Selection Toolbar.
 
  5. The blue area keeps track of the running information when calculating the distance measures. 
 
- 6. The purple area are the key to visualize the pairwise distance result. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
+ 6. The purple area containsthe key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
 
 
 Usage Example of Graphical User Interface
 ------------------------
 
 
-Here we go through a toy example by step-by-step guidance.  You can find a folder named "example" in the unzipped folder, which contains 30 virus genomes. There are two subfolders, "data" and "hash". The folder "data" contains the corresponding genome sequence files in the fasta format. And the folder "hash" contains the corresponding binary kmer count files. 
+Here we go through a toy example step-by-step.  You can find a folder named "example" in the unzipped folder.
 
-We first click the third button of the Data Selection Toolbar and select the "data" folder, selecting all the 30 virus genome sequence files into the input list.
+We first click the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addDir.gif) button of the Data Selection Toolbar and select the "data" folder, selecting all the virus genome sequence files into the input list.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot2.jpg"/>
 </p>
 
-We next specify the directory to save the binary k-mer count files. Users can choose any folder they want or even skip this step, by default, the binary k-mer count files would be saved in the current directory. To save time, we choose the "hash" folder which stores all pre-computed binary k-mer count files. The setting panel can be found in the menu, which contains the configuration of Jellyfish executable file path, the saved hash directory and the quantile of edges to display in the network analysis.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot3.jpg"/>
-</p>
-
-After that, we arrives at the last step, that is, specifying the alignment-free distance. Here we choose Manhattan distance measure, and simply click the 'Run' button, with default setting ( K=8 ). After seconds, the result is available in visualized plots. Also, we can track the progress through the console in the left panel.
+We then specify the alignment-free distance. Here we choose Manhattan distance measure, and simply click the 'Run' button, with default k-mer length setting ( K=8 ). Then calculated pairwise distances will be saved into a file named 'result.Ma.phylip'. The file is saved in standard phylip format. Meanwhile, the result is available in visualized plots. Also, we can track the progress through the console in the left panel.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot4.jpg"/>
 </p>
 
-Notice that if the result has been computed before or from somewhere else, we can simply use the Graphical User Interface to visualize the result anytime by clicking the first button of the Data Selection Toolbar! 
+Notice that users can always load previously saved phylip results for visualization by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) button of the Data Selection Toolbar! 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot5.jpg"/>
 </p>
 
-Once the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse. The buttons are in the Image Toolbar. Here is the dendrogram of the pairwise distances by using the neighbour-joining algorithm. 
+Once the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) button or using the mouse wheel. Meanwhile, the figure can be saved locally by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) button or through the popup menu by right-clicking the mouse.
+
+Here is the dendrogram of the pairwise distances by using the neighbour-joining algorithm. 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot6.jpg"/>
@@ -101,7 +99,7 @@ Here is the two dimensional projection using principal coordinate analysis (PCoA
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot7.jpg"/>
 </p>
 
-Here is the heatmap, very straightforward.
+Here is the heatmap.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot8.jpg"/>
@@ -122,57 +120,58 @@ Usage of  Stand-alone Executable Program
 
 > - Main arguments:
 	- **-D** < dist >  Comma-separated list of distance measurements,  **E.g.** -D D2star,Ma,CVtree. The options include: 
-		 - Conventional measures based on kmer counts :	
-		 - 
-				 1. Ch: Chebyshev distance
-				 2. Canberra: Canberra distance
-				 3. Chisq: Chi-Square distance
-				 4. Cosine: Cosine distance
-				 5. Co-phylog: Co-phylog distance
-				 6. D2: D2 distance
-				 7. Eu: Euclidean distance
-				 8. FFP: Feature frequency profiles (FFP)
-				 9. JS: Jensen-Shannon divergence
-				 10. Ma: Manhattan distance
-				 11. Pearson: Pearson distance
-		 - Newly developed measures based on background adjusted kmer counts: 
-		 -
-				 1. CVtree: CVtree distance
-				 2. D2shepp: D2shepp distance
-				 3. D2star: D2star distance
-		 - Measures based on presence/absence of kmers:
-		 -
-				 1. Anderberg: Anderberg distance
-				 2. Antidice: anti-Dice distance
-				 3. Dice: Dice distance
-				 4. Gower: Gower distance
-				 5. Hamman: Hamman distance
-				 6. Hamming: Hamming distance
-				 7. Jaccard: Jaccard distance
-				 8. Kulczynski: Kulczynski distance
-				 9. Matching: Matching distance
-				 10. Ochiai: Ochiai distance
-				 11. Phi: Pearson Phi distance
-				 12. Russel: Russel-Rao distance
-				 13. Sneath: Sneath-Sokal distance
-				 14. Tanimoto: Rogers-Tanimoto distance
-				 15. Yule: Yule distance
-	- **-I** < fa_files > Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
-	- **-K** < intK > Kmer Length.
+			 - Conventional measures based on kmer counts :			 
+1. Ch: Chebyshev distance
+2. Canberra: Canberra distance
+3. Chisq: Chi-Square distance
+4. Cosine: Cosine distance
+5. Co-phylog: Co-phylog distance
+6. D2: D2 distance
+7. Eu: Euclidean distance
+8. FFP: Feature frequency profiles (FFP)
+9. JS: Jensen-Shannon divergence
+10. Ma: Manhattan distance
+11. Pearson: Pearson distance
+				
+			 - Newly developed measures based on background adjusted kmer counts: 
+			 
+1. CVtree: CVtree distance
+2. D2shepp: D2shepp distance
+3. D2star: D2star distance
+				
+			 - Measures based on presence/absence of kmers:
+
+1. Anderberg: Anderberg distance
+2. Antidice: anti-Dice distance
+3. Dice: Dice distance
+4. Gower: Gower distance
+5. Hamman: Hamman distance
+6. Hamming: Hamming distance
+7. Jaccard: Jaccard distance
+8. Kulczynski: Kulczynski distance
+9. Matching: Matching distance
+10. Ochiai: Ochiai distance
+11. Phi: Pearson Phi distance
+12. Russel: Russel-Rao distance
+13. Sneath: Sneath-Sokal distance
+14. Tanimoto: Rogers-Tanimoto distance
+15. Yule: Yule distance
+		- **-I** < fa_files > Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
+		- **-K** < intK > Kmer Length.
 
 > - Options:
 	- **-J** < jfexe_path > Use jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish
 	- **-L** < lower > Only consider k-mer with occurrence >= <lower>. The default value is 1.
-	- **-M** < order > Markov Order involved in D2star, D2shepp and JS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is 0 (i.i.d. model).
+	- **-M** < order > Markov Order involved in D2star, D2shepp and JS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is -1 as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 	- **-R** Consider Reverse Complement in kmer counting.
 	- **-S** < dir > Save/Load calculated k-mer count binary files to the folder < dir >. Each input fasta file corresponds to particular model.
 	- **-O** < path > Output results to file at < path >.
 	- **-T** < type > The output type as the input to downstream analysis, including: plain, [phylip](http://evolution.genetics.washington.edu/phylip.html) (as hierarchical clustering), [cytoscape](www.cytoscape.org/) (as network analysis) and mds (Multidimensional Scaling as 2D plotting). E.g. -T mds. The default type is plain.
 
 > - Examples:
-	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao
-	- ./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao
-	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma,Hao -R
+	- ./cafe -M 0 -O output_path -S model_dir -T plain -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma
+	- ./cafe -M 0 -S model_dir -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma
+	- ./cafe -M 0 -L 2 -I speciesA.fa,speciesB.fa -J /panfs/cmb-panasas2/ylu465/jellyfish-2.2.4/bin/./jellyfish -K 10 -D D2star,Ma -R
 
 
 
@@ -209,4 +208,4 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 
-Last update: 24-Jan-2017
+Last update: 26-Jan-2017
