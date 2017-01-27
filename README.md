@@ -36,7 +36,7 @@ Guidance on Graphical User Interface
 </p>
 The graphical user interface has the layout shown in the above figure, containing six parts in terms of functionality:
 
-1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
+The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) : Load Existing Results in Phylip format.
 
@@ -48,9 +48,9 @@ The graphical user interface has the layout shown in the above figure, containin
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
 
-2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
+The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 
-3. The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
+The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) : Zoom in the current figure.
 
@@ -58,12 +58,11 @@ The graphical user interface has the layout shown in the above figure, containin
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) : Save the current figure.
 
+The green area contains the list of all sequence added from the Data Selection Toolbar.
 
-4. The green area contains the list of all sequence added from the Data Selection Toolbar.
+The blue area keeps track of the running information when calculating the distance measures. 
 
-5. The blue area keeps track of the running information when calculating the distance measures. 
-
-6. The purple area containsthe key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
+The purple area containsthe key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
 
 
 Usage Example of Graphical User Interface
