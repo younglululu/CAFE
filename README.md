@@ -38,25 +38,25 @@ The graphical user interface has the layout shown in the above figure, containin
 
 1. The red area corresponds to the Data Selection Toolbar. The sequence data can be either long genomic sequences or shotgun sequence reads from NGS technologies, with the file extension '.fasta', '.fa' or '.fna'. 
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) : Load Existing Results in Phylip format.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/load.gif) : Load Existing Results in Phylip format.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addFile.gif)  :  Add one genome sequence to the list.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addFile.gif)  :  Add one genome sequence to the list.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addDir.gif)  :  Add all genome sequences from directory to the list.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/addDir.gif)  :  Add all genome sequences from directory to the list.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/remove.gif)  :  Remove Selected genome sequences in the list.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/remove.gif)  :  Remove Selected genome sequences in the list.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
 
  2. The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 
  3. The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) : Zoom in the current figure.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) : Zoom in the current figure.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) : Zoom out the current figure.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) : Zoom out the current figure.
 
-	![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) : Save the current figure.
+  ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) : Save the current figure.
 
 
  4. The green area contains the list of all sequence added from the Data Selection Toolbar.
@@ -126,7 +126,7 @@ Usage of  Stand-alone Executable Program
 
 > - Main arguments:
 	- **-D** < dist >  Comma-separated list of distance measurements,  **E.g.** -D D2star,Ma,CVtree. The options include: 
-			 - Conventional measures based on kmer counts :		
+		Conventional measures based on kmer counts :		
 			 
 				1. Ch: Chebyshev distance
 				
@@ -150,7 +150,7 @@ Usage of  Stand-alone Executable Program
 				
 				11. Pearson: Pearson distance
 				
-			 - Newly developed measures based on background adjusted kmer counts: 
+		Newly developed measures based on background adjusted kmer counts: 
 			 
 				1. CVtree: CVtree distance
 				
@@ -158,7 +158,7 @@ Usage of  Stand-alone Executable Program
 				
 				3. D2star: D2star distance
 				
-			 - Measures based on presence/absence of kmers:
+		Measures based on presence/absence of kmers:
 
 				1. Anderberg: Anderberg distance
 				
