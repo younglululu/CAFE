@@ -62,7 +62,7 @@ The green area contains the list of all sequence added from the Data Selection T
 
 The blue area keeps track of the running information when calculating the distance measures. 
 
-The purple area containsthe key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
+The purple area contains the key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
 
 
 Usage Example of Graphical User Interface
