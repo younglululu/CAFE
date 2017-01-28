@@ -13,16 +13,16 @@ One-click Installation
 
 Installation on Windows
 ------------------------
-> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/5ck9ixs9h6r0pqr/CAFEGUI_win.zip?dl=0)
+> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/bvo1tn94z6m2k7e/CAFE_win.zip?dl=0)
 > 2. Unzip it
-> 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time.
+> 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time. 
+> 4. In rare case the program may fail due to permission issue, so please try to right-click **CAFEGUI.exe** and 'Run as administrator'.
 
 Installation on Mac
 ------------------------
-> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/slbka30b281c3xz/CAFEGUI_mac.zip?dl=0)
+> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/pgxxg40v50pcw2u/CAFE_mac.zip?dl=0)
 > 2. Unzip it
-> 3. Use the terminal to execute "./CAFEGUI" under the folder. 
-> 4. Notice that simply double-click "CAFEGUI" may not work
+> 3. Within the folder, double-click **CAFEGUI**. If fails, please use the terminal to execute "./CAFEGUI".
 
 
 Usage
@@ -48,7 +48,7 @@ The red area corresponds to the Data Selection Toolbar. The sequence data can be
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
 
-The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complementary of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user, the simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
+The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complement of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user. The simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 
 The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 
@@ -65,7 +65,7 @@ The blue area keeps track of the running information when calculating the distan
 The purple area contains the key to visualize the relationship among the input sequences using different approaches. Specifically,  CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. Each analysis is shown in the respective tabbed window.
 
 
-Usage Example of Graphical User Interface
+An Usage Example of Graphical User Interface
 ------------------------
 
 
@@ -90,7 +90,7 @@ Notice that users can always load previously saved phylip results for visualizat
   <img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/snapshot5.jpg"/>
 </p>
 
-Once the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) button or using the mouse wheel. Meanwhile, the figure can be saved locally by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) button or through the popup menu by right-clicking the mouse.
+Once the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomin.gif) and ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/zoomout.gif) buttons or using the mouse wheel. Meanwhile, the figure can be saved locally by clicking the ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/save.gif) button or through the popup menu by right-clicking the mouse.
 
 Here is the dendrogram of the pairwise distances by using the neighbour-joining algorithm. 
 
@@ -199,7 +199,7 @@ Usage of  Stand-alone Executable Program
 
 	-J < jfexe_path >: Use jellyfish to accelerate kmer counting. <jfexe_path> denotes the file path of jellyfish executable file, e.g. jellyfish-2.2.4/bin/./jellyfish
 	
-	-L < lower >: Only consider k-mer with occurrence >= <lower>. The default value is 1.
+	-L < lower >: Only consider k-mer with occurrence >= <lower>. The default value is 0.
 	
 	-M < order >: Markov Order involved in D2star, D2shepp and JS. There are two possible options. The first option is one single value indicating that all the sequences use the same order. The second option is comma-separated list of orders. Notice that the length of the list should match the number of fasta files. The order value could be non-negative integer but less than Kmer length or \"-1\" with the special intention to automatically infer the suitable order (not suitable for JS). The default Markov Order is -1 as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 	
@@ -241,7 +241,7 @@ Copyright (C) 2017 University of Southern California, Yang Lu
 
 Authors: Yang Lu
 
-This program is free software: you can redistribute it and/or modify it under
+This program is free software for academic use: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation, either version 3 of the License, or (at your option) any later
 version.
@@ -253,4 +253,6 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 
-Last update: 26-Jan-2017
+For commercial use, please contact [Fengzhu Sun](mailto:fsun@usc.edu)
+
+Last update: 27-Jan-2017
