@@ -253,6 +253,6 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 
-For commercial use, please contact [Fengzhu Sun](mailto:fsun@usc.edu)
+For commercial use, please contact Prof.[Fengzhu Sun](mailto:fsun@usc.edu)
 
 Last update: 27-Jan-2017
