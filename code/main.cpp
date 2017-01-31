@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
 	int i_k = 0, i_lowerCnt = 0;
 	OUTPUT_TYPE outputType = PHYLIP;
-	bool singleStrain = true, containChiSq = false, containCvtree = false, jellyfishValid = false;
+	bool singleStrain = true, containChiSq = false, containCvtree = false, jellyfishValid = true;
 	std::string str_save_modelDir = "", str_save_vizDir = "", str_outputFileURL = "", str_jellyfishExeURL = "";
 	
 	printf("Start parsing the arguments... \n");
