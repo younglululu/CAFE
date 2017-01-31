@@ -13,10 +13,11 @@ One-click Installation
 
 Installation on Windows
 ------------------------
-> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/bvo1tn94z6m2k7e/CAFE_win.zip?dl=0)
+> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/u7m8w2qvdzozyfs/CAFE_win.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time. 
-> 4. In rare case the program may fail due to permission issue, so please try to right-click **CAFEGUI.exe** and 'Run as administrator'.
+> 4. In rare cases the program may fail due to permission issue, so please try to double-click **CAFE.reg** to add the program to registry.
+> 4. If it fails again, try to right-click **CAFEGUI.exe** and 'Run as administrator'.
 
 Installation on Mac
 ------------------------
