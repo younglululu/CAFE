@@ -10,10 +10,11 @@ CAFE works with sequence data, both long genomic sequences and shotgun sequence 
 
 One-click Installation
 ============
+<font color="red">(DO NOT download using the “clone or download” button above)</font>
 
 Installation on Windows
 ------------------------
-> 1. Download the Windows Version of CAFE  from [here](https://www.dropbox.com/s/u7m8w2qvdzozyfs/CAFE_win.zip?dl=0)
+> 1. Download the Windows Version of CAFE  from [**here**](https://www.dropbox.com/s/u7m8w2qvdzozyfs/CAFE_win.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time. 
 > 4. In rare cases the program may fail due to permission issue, so please try to double-click **CAFE.reg** to add the program to registry.
@@ -21,7 +22,7 @@ Installation on Windows
 
 Installation on Mac
 ------------------------
-> 1. Download the Mac Version of CAFE  from [here](https://www.dropbox.com/s/pgxxg40v50pcw2u/CAFE_mac.zip?dl=0)
+> 1. Download the Mac Version of CAFE  from [**here**](https://www.dropbox.com/s/pgxxg40v50pcw2u/CAFE_mac.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI**. If fails, please use the terminal to execute "./CAFEGUI".
 
@@ -256,4 +257,4 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 For commercial use, please contact Prof.[Fengzhu Sun](mailto:fsun@usc.edu)
 
-Last update: 27-Jan-2017
+Last update: 01-Feb-2017
