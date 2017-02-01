@@ -10,9 +10,7 @@ CAFE works with sequence data, both long genomic sequences and shotgun sequence 
 
 One-click Installation
 ============
-<p style='color:red'>(DO NOT download using the “clone or download” button above)</p>
-<font color="red">(DO NOT download using the “clone or download” button above)</font>
-<b style='color:red'>(DO NOT download using the “clone or download” button above)</b>
+<img src="https://raw.githubusercontent.com/younglululu/CAFE/master/image/warn.svg"/>
 
 Installation on Windows
 ------------------------
