@@ -177,7 +177,7 @@ class GowerStrategy : public AbsBinaryTupleStrategy
 {
 public:
 	GowerStrategy(int i_arg_k, bool b_arg_singleStrain) : AbsBinaryTupleStrategy(i_arg_k, b_arg_singleStrain){ }
-	double getDist(){ return 1-(A/(A+B)+A/(A+C)+D/(C+D)+D/(B+D))/4; }
+	double getDist(){ return 1-A*D/sqrt((A+B)*(A+C)*(D+B*(D+C))); }
 };
 
 class RusselStrategy : public AbsBinaryTupleStrategy
