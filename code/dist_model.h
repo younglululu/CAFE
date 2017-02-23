@@ -92,12 +92,12 @@ private:
 class HammingStrategy : public AbsTupleDistStrategy
 {
 public:
-	HammingStrategy(int i_arg_k, bool b_arg_singleStrain) : AbsTupleDistStrategy(i_arg_k, b_arg_singleStrain){ d_result = 0; }
-	void dealWithTuple(double src_X_w, double trgt_X_w) { if((src_X_w>0 && 0==trgt_X_w) || (trgt_X_w>0 && 0==src_X_w)) d_result++;}
-	double getDist(){ return d_result; }
+	HammingStrategy(int i_arg_k, bool b_arg_singleStrain) : AbsTupleDistStrategy(i_arg_k, b_arg_singleStrain){ d_result = 0; sum = 0; }
+	void dealWithTuple(double src_X_w, double trgt_X_w) { sum++; if((src_X_w>0 && 0==trgt_X_w) || (trgt_X_w>0 && 0==src_X_w)) d_result++;}
+	double getDist(){ return d_result/sum; }
 
 private:
-	double d_result;
+	double d_result, sum;
 };
 
 class AbsBinaryTupleStrategy : public AbsTupleDistStrategy
