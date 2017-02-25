@@ -3,7 +3,7 @@
 
 ===================
 
-Thank you for downloading CAFE for molecular sequence analysis using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall **29** distance/dissimilarity measures including (1) conventional measures based on k-mer counts, (2) newly developed measures based on background adjusted k-mer counts, and (3) measures based on presence/absence of k-mers. The detailed definitions can be found in the paper. 
+Thank you for downloading CAFE for molecular sequence analysis using state-of-art Alignment-Free methods. This software provides the well-optimized programs to compute overall **28** distance/dissimilarity measures including (1) conventional measures based on k-mer counts, (2) newly developed measures based on background adjusted k-mer counts, and (3) measures based on presence/absence of k-mers. The detailed definitions can be found in the paper. 
 
 CAFE works with sequence data, both long genomic sequences and shotgun sequence reads from NGS technologies, and subsequently generates pairwise dissimilarities among the sequences as output. CAFE provides four types of visualized downstream analysis, including heatmap, two dimensional projection using principal coordinate analysis (PCoA), network display, and sequence clustering into a dendrogram by using the neighbour-joining algorithm. All the analysis can be performed by simply clicking through well-designed graphical user interface (GUI) on two common operating systems ( Mac and Windows) or invoking a stand-alone command line executable program on three common operating systems (Linux, Mac, and Windows)
 
@@ -14,15 +14,15 @@ One-click Installation
 
 Installation on Windows
 ------------------------
-> 1. Download the Windows Version of CAFE  from [**here**](https://www.dropbox.com/s/u7m8w2qvdzozyfs/CAFE_win.zip?dl=0)
+> 1. Download the Windows Version of CAFE  from [**here**](https://www.dropbox.com/s/u67b2yjc59dppuz/CAFE_win.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI.exe**. Be patient for the first time. 
-> 4. In rare cases the program may fail due to permission issue, so please try to double-click **CAFE.reg** to add the program to registry.
+> 4. In rare cases the program may fail due to permission issue, so please try to double-click **CAFE.reg** to add the program to registry and reboot.
 > 4. If it fails again, try to right-click **CAFEGUI.exe** and 'Run as administrator'.
 
 Installation on Mac
 ------------------------
-> 1. Download the Mac Version of CAFE  from [**here**](https://www.dropbox.com/s/pgxxg40v50pcw2u/CAFE_mac.zip?dl=0)
+> 1. Download the Mac Version of CAFE  from [**here**](https://www.dropbox.com/s/wab12mnc49ehhqg/CAFE_mac.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI**. If fails, please use the terminal to execute "./CAFEGUI".
 
@@ -50,7 +50,7 @@ The red area corresponds to the Data Selection Toolbar. The sequence data can be
 
 ![alt tag](https://raw.githubusercontent.com/younglululu/CAFE/master/code/image/clear.gif)  :  Remove all genome sequences in the list.
 
-The yellow area involves parameter configuration related to various distance measures, including the selection of 29 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complement of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user. The simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
+The yellow area involves parameter configuration related to various distance measures, including the selection of 28 distance measures, k-mer length, potential Markov Order encoding the sequence model, the threshold cutoff of the k-mer occurrences, and whether to consider the reverse complement of each k-mer, which  is a common practice in dealing with shotgun sequence reads from NGS technologies. Usually the potential Markov Order remains unclear to the user. The simple yet time-consuming way is to choose '-1' as inferring the optimal Markov Order automatically by using the Bayesian Information Criterion (BIC).
 
 The pink area corresponds to the Image Toolbar. When the visualized results have been plotted, users can either zoom in or zoom out the figure by clicking the button or using the mouse wheel. Meanwhile, the figure can be saved locally by  clicking the button or right-clicking the mouse.
 

@@ -4,6 +4,8 @@ import threading
 import time
 import subprocess
 import platform
+import ctypes
+
 #from Tkinter import *
 from mtTkinter import *
 import Tkconstants
@@ -14,6 +16,11 @@ from ttk import *
 
 from math import ceil
 from sklearn.manifold import MDS
+
+if platform.system() == 'Darwin':
+    import matplotlib
+    matplotlib.use("TkAgg")
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 from matplotlib.colors import LinearSegmentedColormap
@@ -404,6 +411,9 @@ class GUIApp:
 
             self.console_box.config(state='disabled')
             time.sleep(1)
+            
+        vizURL = "result."+self.distVal.get()+".phylip"
+        self.callViz(vizURL)
     
     def _phyloLabel_callback(self,clade):
         if clade.name.startswith('Inner'): return None
@@ -816,11 +826,21 @@ class GUIApp:
             #dirName = os.path.dirname(os.path.abspath(__file__))
             #dirName = os.getcwd()
             #p = subprocess.Popen(paramArr, cwd=dirName, shell=True)
+            
             p = subprocess.Popen(paramArr, shell=True)
             p.communicate()
+            
+            #f = open('run.cmd', 'w+')
+            #f.write(" ".join(paramArr))
+            #f.close()
+            
+            #shell32 = ctypes.windll.shell32
+            #ret = shell32.ShellExecuteW(None, u"runas", u"cmd", u"/user:Administrator", None, 1)
+            #ret = shell32.ShellExecuteW(None, u"open", u"cmd.exe", u"/C run.cmd", None, 1)
+            #print("return ShellExecuteW is: " + str(ret))
         
-        vizURL = "result."+self.distVal.get()+".phylip"
-        self.callViz(vizURL)
+        #vizURL = "result."+self.distVal.get()+".phylip"
+        #self.callViz(vizURL)
     
     def on_run_button_clicked(self,event=None):
         if not len(self.input_list) or len(self.input_list)==1:
@@ -842,14 +862,12 @@ class GUIApp:
         self.checkConsoleT.setDaemon(True)    
         self.checkConsoleT.start()
         
-        self.callT = threading.Thread(target=self.callCAFE)
-        self.callT.setDaemon(True)    
-        self.callT.start()
+        #self.callT = threading.Thread(target=self.callCAFE)
+        #self.callT.setDaemon(True)    
+        #self.callT.start()
         
         self.run_button.config(state='disabled')
-        
-        #self.checkConsoleT.join()
-        #self.callT.join()
+        self.callCAFE()
         
     def exit_app(self):
         self.check_console = False
@@ -910,8 +928,18 @@ class GUIApp:
         else:
             pass
 
-if __name__ == '__main__':
+if __name__ == '__main__':  
+    
+#     if not os.environ["TCL_LIBRARY"]:
+#         os.environ["TCL_LIBRARY"] = os.path.join(os.getcwd(), 'tcl')
+#         print(os.environ["TCL_LIBRARY"])
+#     if not os.environ["TK_LIBRARY"]:
+#         os.environ["TK_LIBRARY"] = os.path.join(os.getcwd(), 'tk')
+#         print(os.environ["TK_LIBRARY"])
+
+    print(os.getcwd())
     os.chdir(os.getcwd())
+    print(os.environ["TCL_LIBRARY"])
     
     root = Tk()
     root.style = Style()
