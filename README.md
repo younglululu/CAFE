@@ -22,7 +22,7 @@ Installation on Windows
 
 Installation on Mac
 ------------------------
-> 1. Download the Mac Version of CAFE  from [**here**](https://www.dropbox.com/s/wab12mnc49ehhqg/CAFE_mac.zip?dl=0)
+> 1. Download the Mac Version of CAFE  from [**here**](https://www.dropbox.com/s/2eaifho7anidm6k/CAFE_mac.zip?dl=0)
 > 2. Unzip it
 > 3. Within the folder, double-click **CAFEGUI**. If fails, please use the terminal to execute "./CAFEGUI".
 
