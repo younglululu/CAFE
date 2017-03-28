@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ch")) vec_dist.push_back(Ch);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "ffp")) vec_dist.push_back(FFP);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "co-phylog")) vec_dist.push_back(Co_Phylog);
-		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "cvtree ")) { containCvtree = true; vec_dist.push_back(CVtree); }
+		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "cvtree")) { containCvtree = true; vec_dist.push_back(CVtree); }
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "js")) vec_dist.push_back(JS);
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "chisq")) { containChiSq = true; vec_dist.push_back(CHISQ); }
 		else if (!strcmp(toLowerCase(vec_distStr[j]).c_str(), "cosine")) vec_dist.push_back(COSINE);
