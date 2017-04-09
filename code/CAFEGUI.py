@@ -31,10 +31,12 @@ import numpy as np
 import networkx as nx
 
 from Bio import Phylo
+from Bio.Phylo.Consensus import *
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor,_DistanceMatrix
 
 APP_NAME = "CAFE: aCcelerated Alignment-FrEe sequence analysis"
 GLOBAL_HASH_DIR = ""
+GLOBAL_RESULT_DIR = ""
 GLOBAL_JELLYFISH_PATH = ""
 GLOBAL_QUANTILE = 10
 
@@ -83,6 +85,7 @@ class PreferencesWindow():
         self.openFile_icon = PhotoImage(file='image/openfile.gif')
         self.jellyfishVal = StringVar()
         self.hashVal = StringVar()
+        self.resultVal = StringVar()
         self.quantVal = IntVar()
         self.create_prefereces_window()
         
@@ -94,6 +97,7 @@ class PreferencesWindow():
         
     def create_prefereces_list(self):
         global GLOBAL_HASH_DIR
+        global GLOBAL_RESULT_DIR
         global GLOBAL_JELLYFISH_PATH
         global GLOBAL_QUANTILE
         
@@ -107,9 +111,14 @@ class PreferencesWindow():
         ttk.Button(self.pref_window, image=self.openFile_icon, command=self.on_open_file_hash).grid(row=2, column=1, columnspan=2, sticky=E, padx=5, pady=5)
         self.hash_Entry = Entry(self.pref_window, textvariable=self.hashVal).grid(row=2, column=4, columnspan=5, pady=4)
         
+        self.resultVal.set(GLOBAL_RESULT_DIR)
+        Label(self.pref_window, text="Saved result directory:").grid(row=3, column=0, sticky=W, padx=5, pady=5)
+        ttk.Button(self.pref_window, image=self.openFile_icon, command=self.on_open_file_result).grid(row=3, column=1, columnspan=2, sticky=E, padx=5, pady=5)
+        self.hash_Entry = Entry(self.pref_window, textvariable=self.resultVal).grid(row=3, column=4, columnspan=5, pady=4)
+        
         self.quantVal.set(GLOBAL_QUANTILE)
-        Label(self.pref_window, text="Quantile for Network:").grid(row=3, column=0, sticky=W, padx=5, pady=5)
-        Spinbox(self.pref_window, from_=1, to=100, width=4, textvariable=self.quantVal, increment=1).grid(row=3, column=1, columnspan=2, pady=4)
+        Label(self.pref_window, text="Quantile for Network:").grid(row=4, column=0, sticky=W, padx=5, pady=5)
+        Spinbox(self.pref_window, from_=1, to=100, width=4, textvariable=self.quantVal, increment=1).grid(row=4, column=1, columnspan=2, pady=4)
         
         ttk.Button(self.pref_window, text="Save", command=self.on_save_button_clicked).grid(
             row=5, column=2, sticky=E, padx=5, pady=5)
@@ -127,16 +136,24 @@ class PreferencesWindow():
         if hash_dir:
             self.hashVal.set(hash_dir)
     
+    def on_open_file_result(self):
+        result_dir = tkFileDialog.askdirectory()
+        if result_dir:
+            self.resultVal.set(result_dir)
+    
     def on_save_button_clicked(self):
         global GLOBAL_HASH_DIR
+        global GLOBAL_RESULT_DIR
         global GLOBAL_JELLYFISH_PATH
         global GLOBAL_QUANTILE
 
         GLOBAL_HASH_DIR = self.hashVal.get()
         GLOBAL_JELLYFISH_PATH = self.jellyfishVal.get()
         GLOBAL_QUANTILE = self.quantVal.get()
+        GLOBAL_RESULT_DIR = self.resultVal.get()
         
         print(GLOBAL_HASH_DIR)
+        print(GLOBAL_RESULT_DIR)
         print(GLOBAL_JELLYFISH_PATH)
         print(GLOBAL_QUANTILE)
         self.pref_window.destroy()
@@ -317,16 +334,20 @@ class GUIApp:
         self.tab1 = ttk.Frame(tabControl) 
         tabControl.add(self.tab1, text='Network')
         
-        tabControl.grid(row=14, column=5, columnspan=15, rowspan = 10, padx=2, sticky='nw')
+        tabControl.grid(row=14, column=5, columnspan=15, rowspan = 10, padx=2, sticky=Tkconstants.NSEW)
         
     def show_context_menu(self, event):
         self.context_menu.tk_popup(event.x_root, event.y_root)
     
     def on_load_button_clicked(self):
-        vizURL = tkFileDialog.askopenfilename(filetypes=[('All supported', '.phylip'), ('.phylip files', '.phylip')])
-        if not vizURL:
+        vizURLArr = tkFileDialog.askopenfilenames(filetypes=[('All supported', '.phylip'), ('.phylip files', '.phylip')])
+        if not vizURLArr:
             return
-        self.callViz(vizURL)
+        
+        if len(vizURLArr) > 1:
+            self.callViz_multi(vizURLArr)
+        else:
+            self.callViz(vizURLArr[0])
     
     def on_addFile_button_clicked(self):
         input_file = tkFileDialog.askopenfilename(filetypes=[('All supported', '.fasta .fa .fna'), ('.fasta files', '.fasta'), ('.fa files', '.fa'), ('.fna files', '.fna')])
@@ -391,7 +412,7 @@ class GUIApp:
             
             if os.path.isfile(self.logURL):
                 if self.optSys == 'Windows' :
-                    os.system("copy " + self.logURL + " " + self.logURL_replicate)
+                    os.system("copy \"" + self.logURL + "\" \"" + self.logURL_replicate + "\"")
                 else :
                     os.system("cp " + self.logURL + " " + self.logURL_replicate)  
                 
@@ -410,10 +431,10 @@ class GUIApp:
                         self.run_button.config(state='normal')
 
             self.console_box.config(state='disabled')
-            time.sleep(1)
+            time.sleep(5)
             
-        vizURL = "result."+self.distVal.get()+".phylip"
-        self.callViz(vizURL)
+        #vizURL = "result."+self.distVal.get()+".phylip"
+        #self.callViz(vizURL)
     
     def _phyloLabel_callback(self,clade):
         if clade.name.startswith('Inner'): return None
@@ -568,6 +589,71 @@ class GUIApp:
         canvasContainer.config(scrollregion=canvasContainer.bbox(Tkconstants.ALL),width=800,height=600)
         figure.canvas.draw()
     
+    
+    def callViz_multi(self, vizURLArr):
+        for widget in self.tab4.winfo_children():
+            widget.destroy()
+        
+        #phylogenetic tree
+        canvas_frame_tab4 = Frame(self.tab4)
+        canvas_frame_tab4.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        canvas_frame_tab4.rowconfigure(1, weight=1)
+        canvas_frame_tab4.columnconfigure(1, weight=1)
+        
+        self.fig_tab4, ax_tab4 = plt.subplots()
+        ax_tab4.autoscale(enable=True)
+        
+        self.canvas_tab4_container = Canvas(canvas_frame_tab4)
+        self.canvas_tab4_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
+        x_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient=HORIZONTAL)
+        y_scroll_tab4 = Scrollbar(canvas_frame_tab4, orient=VERTICAL)
+        x_scroll_tab4.grid(row=2, column=1, sticky=Tkconstants.EW)
+        y_scroll_tab4.grid(row=1,column=2, sticky=Tkconstants.NS)
+        self.canvas_tab4_container.config(xscrollcommand=x_scroll_tab4.set)
+        x_scroll_tab4.config(command=self.canvas_tab4_container.xview)
+        self.canvas_tab4_container.config(yscrollcommand=y_scroll_tab4.set)
+        y_scroll_tab4.config(command=self.canvas_tab4_container.yview)
+        
+        self.context_menu_tab4 = Menu(self.canvas_tab4_container, tearoff=0)
+        self.context_menu_tab4.add_command( label="Save to Image", command=lambda:self.on_save_context_menu_clicked(4))
+        
+        self.canvas_tab4_container.bind('<Enter>', self._bound_to_mousewheel)
+        self.canvas_tab4_container.bind('<Leave>', self._unbound_to_mousewheel)
+        
+        treelist = []
+        for vizURL in vizURLArr:
+            print(vizURL)
+            
+            firstCol = np.loadtxt(vizURL,usecols=range(1),dtype='str')
+            genomeSize = int(firstCol[0])
+            genomeDist = np.loadtxt(vizURL,usecols=range(1,len(firstCol)),skiprows=1)
+            genome_min = np.amin(genomeDist)
+            genomeDist = genomeDist - genome_min;
+            genome_min = np.amin(genomeDist)
+            genome_max = np.amax(genomeDist)
+            genomeDist_normed = genomeDist / genome_max
+            genome_cmap = LinearSegmentedColormap.from_list('mycmap', [(0, 'blue'),(1, 'white')])
+            
+            genomeDist = genomeDist.tolist()
+            genomeList = firstCol[1:].tolist()
+            
+            genomeTriDist = []
+            for row in range(genomeSize):
+                genomeTriDist.append(genomeDist[row][0:row+1])
+            dm = _DistanceMatrix(genomeList, matrix=genomeTriDist)
+            constructor = DistanceTreeConstructor()
+            tree = constructor.nj(dm)
+            treelist.append(tree)        
+        
+        consensus_tree = majority_consensus(treelist, 0.5)
+        Phylo.draw(consensus_tree, do_show=False, axes=ax_tab4)
+        
+        self.canvas_tab4 = FigureCanvasTkAgg(self.fig_tab4, master=self.canvas_tab4_container)
+        self.cwid_tab4 = self.canvas_tab4_container.create_window(0, 0, window=self.canvas_tab4.get_tk_widget(), anchor=Tkconstants.NW)
+        self.canvas_tab4_container.config(scrollregion=self.canvas_tab4_container.bbox(Tkconstants.ALL),width=800,height=600)
+
+        tkMessageBox.showinfo(APP_NAME,'You are selecting multiple .phylip results to show the consensus tree! The PCoA, Heatmap, and Network result is only available for single .phylip result.')
+    
     def callViz(self, vizURL):
         print("vizURL: "+vizURL)
         if not os.path.isfile(vizURL):
@@ -585,7 +671,7 @@ class GUIApp:
         
         #phylogenetic tree
         canvas_frame_tab4 = Frame(self.tab4)
-        canvas_frame_tab4.grid(row=1, column=1, sticky=Tkconstants.NS)
+        canvas_frame_tab4.grid(row=1, column=1, sticky=Tkconstants.NSEW)
         canvas_frame_tab4.rowconfigure(1, weight=1)
         canvas_frame_tab4.columnconfigure(1, weight=1)
         
@@ -640,10 +726,10 @@ class GUIApp:
         canvas_frame_tab3.grid(row=1, column=1, sticky=Tkconstants.NS)
         canvas_frame_tab3.rowconfigure(1, weight=1)
         canvas_frame_tab3.columnconfigure(1, weight=1)
-         
+        
         self.fig_tab3, ax_tab3 = plt.subplots()
         ax_tab3.autoscale(enable=True)
-         
+        
         self.canvas_tab3_container = Canvas(canvas_frame_tab3)
         self.canvas_tab3_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
         x_scroll_tab3 = Scrollbar(canvas_frame_tab3, orient=HORIZONTAL)
@@ -671,16 +757,16 @@ class GUIApp:
         self.canvas_tab3 = FigureCanvasTkAgg(self.fig_tab3, master=self.canvas_tab3_container)
         self.cwid_tab3 = self.canvas_tab3_container.create_window(0, 0, window=self.canvas_tab3.get_tk_widget(), anchor=Tkconstants.NW)
         self.canvas_tab3_container.config(scrollregion=self.canvas_tab3_container.bbox(Tkconstants.ALL),width=800,height=600)
-
+        
         #heatmap
         canvas_frame_tab2 = Frame(self.tab2)
         canvas_frame_tab2.grid(row=1, column=1, sticky=Tkconstants.NS)
         canvas_frame_tab2.rowconfigure(1, weight=1)
         canvas_frame_tab2.columnconfigure(1, weight=1)
-         
+        
         self.fig_tab2, ax_tab2 = plt.subplots()
         ax_tab2.autoscale(enable=True)
-         
+        
         self.canvas_tab2_container = Canvas(canvas_frame_tab2)
         self.canvas_tab2_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
         x_scroll_tab2 = Scrollbar(canvas_frame_tab2, orient=HORIZONTAL)
@@ -711,16 +797,16 @@ class GUIApp:
         self.canvas_tab2 = FigureCanvasTkAgg(self.fig_tab2, master=self.canvas_tab2_container)
         self.cwid_tab2 = self.canvas_tab2_container.create_window(0, 0, window=self.canvas_tab2.get_tk_widget(), anchor=Tkconstants.NW)
         self.canvas_tab2_container.config(scrollregion=self.canvas_tab2_container.bbox(Tkconstants.ALL),width=800,height=600)
-    
+        
         #network
         canvas_frame_tab1 = Frame(self.tab1)
         canvas_frame_tab1.grid(row=1, column=1, sticky=Tkconstants.NS)
         canvas_frame_tab1.rowconfigure(1, weight=1)
         canvas_frame_tab1.columnconfigure(1, weight=1)
-         
+        
         self.fig_tab1, ax_tab1 = plt.subplots()
         ax_tab1.autoscale(enable=True)
-         
+        
         self.canvas_tab1_container = Canvas(canvas_frame_tab1)
         self.canvas_tab1_container.grid(row=1, column=1, sticky=Tkconstants.NSEW)
         x_scroll_tab1 = Scrollbar(canvas_frame_tab1, orient=HORIZONTAL)
@@ -748,21 +834,21 @@ class GUIApp:
         if idx >= len(edgeVal)-1:
             idx = len(edgeVal)-1
         thres = edgeVal[ idx ]
-         
+
         G = nx.Graph()
         for row in range(genomeSize):
             G.add_node(row)
         for fr in range(1,genomeSize):
             for to in range(fr+1,genomeSize):
                 if genomeDist[fr][to] <= thres:
-                    G.add_edge(fr, to, weight=genomeDist[fr][to])      
-                               
+                    G.add_edge(fr, to, weight=genomeDist[fr][to])
+        
         labelsNet = {}
         for node in G.nodes():
-            labelsNet[node] = genomeList[node]        
-         
+            labelsNet[node] = genomeList[node]
+        
         pos = nx.spring_layout(G)
-        nx.draw_networkx_nodes(G, pos, node_color='b') 
+        nx.draw_networkx_nodes(G, pos, node_color='b')
         nx.draw_networkx_labels(G, pos,labelsNet, font_size=8)
         nx.draw_networkx_edges(G, pos, alpha=0.4)
         plt.axis('off')
@@ -770,10 +856,11 @@ class GUIApp:
         self.canvas_tab1 = FigureCanvasTkAgg(self.fig_tab1, master=self.canvas_tab1_container)
         self.cwid_tab1 = self.canvas_tab1_container.create_window(0, 0, window=self.canvas_tab1.get_tk_widget(), anchor=Tkconstants.NW)
         self.canvas_tab1_container.config(scrollregion=self.canvas_tab1_container.bbox(Tkconstants.ALL),width=800,height=600)
-        
+
         self.zoomin_button.config(state='normal')
         self.zoomout_button.config(state='normal')
         self.save_button.config(state='normal')
+
 
     def callCAFE(self):
         if self.optSys == 'Linux' :
@@ -791,6 +878,7 @@ class GUIApp:
             subprocess_flags = 0x8000000
 
         global GLOBAL_HASH_DIR
+        global GLOBAL_RESULT_DIR
         global GLOBAL_JELLYFISH_PATH
 
         paramArr = [exePath]
@@ -823,24 +911,19 @@ class GUIApp:
             p = subprocess.Popen([" ".join(paramArr)], shell=True)
             p.communicate()
         else:
-            #dirName = os.path.dirname(os.path.abspath(__file__))
-            #dirName = os.getcwd()
-            #p = subprocess.Popen(paramArr, cwd=dirName, shell=True)
-            
             p = subprocess.Popen(paramArr, shell=True)
             p.communicate()
-            
-            #f = open('run.cmd', 'w+')
-            #f.write(" ".join(paramArr))
-            #f.close()
-            
-            #shell32 = ctypes.windll.shell32
-            #ret = shell32.ShellExecuteW(None, u"runas", u"cmd", u"/user:Administrator", None, 1)
-            #ret = shell32.ShellExecuteW(None, u"open", u"cmd.exe", u"/C run.cmd", None, 1)
-            #print("return ShellExecuteW is: " + str(ret))
+
+        vizURL = "result."+self.distVal.get()+".phylip"
         
-        #vizURL = "result."+self.distVal.get()+".phylip"
-        #self.callViz(vizURL)
+        if GLOBAL_RESULT_DIR:
+            if os.path.isfile(vizURL):
+                if self.optSys == 'Windows' :
+                    os.system("copy \"" + vizURL + "\" \"" + os.path.join(GLOBAL_RESULT_DIR, vizURL)+"\"")
+                else :
+                    os.system("cp " + vizURL + " " + os.path.join(GLOBAL_RESULT_DIR, vizURL))  
+        
+        self.callViz(vizURL)
     
     def on_run_button_clicked(self,event=None):
         if not len(self.input_list) or len(self.input_list)==1:
@@ -859,15 +942,22 @@ class GUIApp:
             os.system("rm " + self.logURL_replicate)  
         
         self.checkConsoleT = threading.Thread(target=self.display_console)
-        self.checkConsoleT.setDaemon(True)    
+        self.checkConsoleT.setDaemon(True)
         self.checkConsoleT.start()
         
         #self.callT = threading.Thread(target=self.callCAFE)
-        #self.callT.setDaemon(True)    
+        #self.callT.setDaemon(True)
         #self.callT.start()
-        
+
         self.run_button.config(state='disabled')
+        if self.optSys == 'Darwin':
+            self.root.iconify()
+            
         self.callCAFE()
+        
+        if self.optSys == 'Darwin':
+            self.root.deiconify()
+        
         
     def exit_app(self):
         self.check_console = False
@@ -939,7 +1029,6 @@ if __name__ == '__main__':
 
     print(os.getcwd())
     os.chdir(os.getcwd())
-    print(os.environ["TCL_LIBRARY"])
     
     root = Tk()
     root.style = Style()
