@@ -193,6 +193,8 @@ Usage of  Stand-alone Executable Program
 				
 				15. Yule: Yule distance
 				
+	-F < fa_Dir >: Folder containing only fasta files with extension '.fasta', '.fa', and '.fna'.
+	
 	-I < fa_files >: Comma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option.
 	
 	-K < intK >: Kmer Length.

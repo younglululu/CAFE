@@ -12,6 +12,83 @@
 #include "dist_model.h"
 #include "output.h"
 
+
+#ifdef __unix__
+#include <dirent.h>
+int getdir(std::string dir, std::vector<std::string> &files)
+{
+	std::string str_currDir = dir;
+	if (!str_currDir.empty() && !endsWith(str_currDir, "/")) str_currDir.append("/");
+
+	DIR *dp;
+	struct dirent *dirp;
+	if ((dp = opendir(dir.c_str())) == NULL) {
+		std::cout << "Error(" << errno << ") opening " << dir << std::endl;
+		return errno;
+	}
+
+	while ((dirp = readdir(dp)) != NULL)
+	{
+		if (endsWith(dirp->d_name, ".fasta") || endsWith(dirp->d_name, ".fa") || endsWith(dirp->d_name, ".fna"))
+		{
+			std::string fastaURL = str_currDir;
+			fastaURL.append(std::string(dirp->d_name));
+			files.push_back(fastaURL);
+		}
+	}
+	closedir(dp);
+	return 0;
+}
+#elif defined(_WIN32) || defined(WIN32)
+#include <windows.h>
+std::string wchar_t2string(const wchar_t *wchar)
+{
+	std::string str = "";
+	int index = 0;
+	while (wchar[index] != 0)
+	{
+		str += (char)wchar[index];
+		++index;
+	}
+	return str;
+}
+
+wchar_t *string2wchar_t(const std::string &str)
+{
+	wchar_t wchar[260];
+	int index = 0;
+	while (index < str.size())
+	{
+		wchar[index] = (wchar_t)str[index];
+		++index;
+	}
+	wchar[index] = 0;
+	return wchar;
+}
+int getdir(std::string dir, std::vector<std::string> &files)
+{
+	std::string str_currDir = dir;
+	if (!str_currDir.empty() && !endsWith(str_currDir, "/")) str_currDir.append("/");
+
+	std::string searchDir = str_currDir; searchDir.append("*.*");
+	WIN32_FIND_DATA FindFileData;
+	wchar_t * FileName = string2wchar_t(searchDir);
+	HANDLE hFind = FindFirstFile(FileName, &FindFileData);
+
+	while (FindNextFile(hFind, &FindFileData))
+	{
+		std::string file = wchar_t2string(FindFileData.cFileName);
+		if (endsWith(file, ".fasta") || endsWith(file, ".fa") || endsWith(file, ".fna"))
+		{
+			std::string fastaURL = str_currDir;
+			fastaURL.append(std::string(file));
+			files.push_back(fastaURL);
+		}
+	}
+	return 0;
+}
+#endif
+
 void print_usage_and_exit()
 {
 	printf("CAFE:\t aCcelerated Alignment-FrEe sequence analysis\n");
@@ -57,6 +134,7 @@ void print_usage_and_exit()
 	printf("\t\t Tanimoto: Rogers-Tanimoto distance \n");
 	printf("\t\t Yule: Yule distance \n");
 	
+	printf("\t-F <fa_Dir>\tFolder containing only fasta files with extension '.fasta', '.fa', and '.fna'. \n");
 	printf("\t-I <fa_files>\tComma-separated list of sequence fasta files, e.g. -I speciesA.fa,speciesB.fa,speciesC.fa. Pairwise similarity is calculated based upon the sequences specified with this option. \n");
 	printf("\t-K <intK>\tKmer Length\n");
 	printf("\nOptions\n");
@@ -76,6 +154,9 @@ void print_usage_and_exit()
 
 	exit(0);
 }
+
+
+
 
 int main(int argc, char* argv[])
 {
@@ -101,6 +182,13 @@ int main(int argc, char* argv[])
 	for (int i = 1; i < argc; ++i)
 	{
 		if (!strcmp(argv[i], "-I") || !strcmp(argv[i], "-i")) split(std::string(argv[++i]), ",", vec_fastaFiles);
+		if (!strcmp(argv[i], "-F") || !strcmp(argv[i], "-f"))
+		{
+			std::string fastaDir = std::string(argv[++i]);
+			std::cout << fastaDir << std::endl;
+			getdir(fastaDir, vec_fastaFiles);
+			for (int idx = 0; idx < vec_fastaFiles.size(); ++idx) std::cout << "Append: " << vec_fastaFiles[idx] << std::endl;
+		}
 		else if (!strcmp(argv[i], "-K") || !strcmp(argv[i], "-k")) i_k = atoi(argv[++i]);
 		else if (!strcmp(argv[i], "-M") || !strcmp(argv[i], "-m")) split(std::string(argv[++i]), ",", vec_orderStr); 
 		else if (!strcmp(argv[i], "-L") || !strcmp(argv[i], "-l")) i_lowerCnt = atoi(argv[++i]);
