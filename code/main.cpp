@@ -13,7 +13,7 @@
 #include "output.h"
 
 
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__) || defined(__MACH__)
 #include <dirent.h>
 int getdir(std::string dir, std::vector<std::string> &files)
 {
